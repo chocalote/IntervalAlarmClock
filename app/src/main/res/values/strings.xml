@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Interval Alarm Clock</string>
+    <string name="never">Never</string>
+    <string name="everyday">Every Day</string>
+    <string name="default_label">Alarm</string>
+</resources>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:descendantFocusability="blocksDescendants"
+                android:padding="15dp">
+
+    <TextView
+        android:id="@+id/Item_Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ItemTitle"
+        android:textSize="18dp"/>
+
+    <TextView
+        android:id="@+id/Item_Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/Item_Title"
+        android:text="ItemText"
+        android:textSize="12dp"/>
+
+    <Switch
+        android:id="@+id/Item_Enabled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:paddingTop="10dp"
+        />
+
+</RelativeLayout>
