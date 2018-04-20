@@ -18,7 +18,7 @@ import android.util.Log;
 public class AlarmProvider extends ContentProvider {
 
     private static class DatabaseHelper extends SQLiteOpenHelper {
-        private static final String DB_NAME = "alarm.db";
+        private static final String DB_NAME = "alarms.db";
         private static final int version = 1;
 
         public DatabaseHelper(Context context) {
