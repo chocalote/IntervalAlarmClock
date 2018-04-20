@@ -11,8 +11,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
+
+import java.util.Objects;
 
 
 public class AlarmProvider extends ContentProvider {
@@ -21,7 +24,7 @@ public class AlarmProvider extends ContentProvider {
         private static final String DB_NAME = "alarms.db";
         private static final int version = 1;
 
-        public DatabaseHelper(Context context) {
+        private DatabaseHelper(Context context) {
             super(context, DB_NAME, null, version);
         }
 
@@ -55,7 +58,7 @@ public class AlarmProvider extends ContentProvider {
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-            if (true) Log.v("kunxun",
+            Log.v("kunxun",
                     "Upgrading alarms database from version " +
                             oldVersion + " to " + newVersion +
                             ", which will destroy all old data");
@@ -84,7 +87,7 @@ public class AlarmProvider extends ContentProvider {
     }
 
     @Override
-    public Cursor query(Uri url, String[] projectionIn, String selection, String[] selectionArgs, String sort) {
+    public Cursor query(@NonNull Uri url, String[] projectionIn, String selection, String[] selectionArgs, String sort) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 
         int match = sURLMatcher.match(url);
@@ -106,16 +109,16 @@ public class AlarmProvider extends ContentProvider {
                 null, null, sort);
 
         if (ret == null) {
-            if (true) Log.v("kunxun", "Alarms.query: failed");
+            Log.v("kunxun", "Alarms.query: failed");
         } else {
-            ret.setNotificationUri(getContext().getContentResolver(), url);
+            ret.setNotificationUri(Objects.requireNonNull(getContext()).getContentResolver(), url);
         }
 
         return ret;
     }
 
     @Override
-    public String getType(Uri url) {
+    public String getType(@NonNull Uri url) {
 
         int match = sURLMatcher.match(url);
         switch (match) {
@@ -129,9 +132,9 @@ public class AlarmProvider extends ContentProvider {
     }
 
     @Override
-    public int update(Uri url, ContentValues values, String where, String[] whereArgs){
+    public int update(@NonNull Uri url, ContentValues values, String where, String[] whereArgs){
         int count;
-        long rowId = 0;
+        long rowId;
         int match = sURLMatcher.match(url);
         SQLiteDatabase db = mDatabaseHelper.getWritableDatabase();
         switch (match) {
@@ -147,12 +150,12 @@ public class AlarmProvider extends ContentProvider {
             }
         }
         Log.v("Kunxun", "*** notifyChange() rowId: " + rowId + " url " + url);
-        getContext().getContentResolver().notifyChange(url, null);
+        Objects.requireNonNull(getContext()).getContentResolver().notifyChange(url, null);
         return count;
     }
 
     @Override
-    public Uri insert(Uri url, ContentValues initialValues) {
+    public Uri insert(@NonNull Uri url, ContentValues initialValues) {
         if (sURLMatcher.match(url) != ALARMS) {
             throw new IllegalArgumentException("Cannot insert into URL: " + url);
         }
@@ -168,22 +171,21 @@ public class AlarmProvider extends ContentProvider {
 
         Uri newUrl = ContentUris.withAppendedId(Alarm.Columns.CONTENT_URI, rowId);
 
-        getContext().getContentResolver().notifyChange(newUrl, null);
+        Objects.requireNonNull(getContext()).getContentResolver().notifyChange(newUrl, null);
         return newUrl;
     }
 
     @Override
-    public int delete(Uri uri, String where, String [] whereArgs) {
+    public int delete(@NonNull Uri uri, String where, String [] whereArgs) {
         SQLiteDatabase db = mDatabaseHelper.getWritableDatabase();
         int count;
-        long rowId = 0;
+
         switch (sURLMatcher.match(uri)) {
             case ALARMS:
                 count = db.delete("alarms", where, whereArgs);
                 break;
             case ALARMS_ID:
                 String segment = uri.getPathSegments().get(1);
-                rowId = Long.parseLong(segment);
                 if (TextUtils.isEmpty(where)) {
                     where = "_id = " + segment;
                 } else {
@@ -194,7 +196,7 @@ public class AlarmProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Cannot delete from URL: " + uri);
         }
-        getContext().getContentResolver().notifyChange(uri, null);
+        Objects.requireNonNull(getContext()).getContentResolver().notifyChange(uri, null);
         return count;
     }
 

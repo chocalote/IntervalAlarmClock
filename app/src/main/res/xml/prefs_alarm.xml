@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:title="@string/add_layout_name">
+    <Preference
+        android:key="start_time"
+        android:persistent="false"
+        android:title="@string/start_time"
+        ></Preference>
+    <SwitchPreference
+        android:key="interval_enable"
+        android:persistent="false"
+        android:title="@string/interval_enabled"></SwitchPreference>
+    <Preference
+        android:key="end_time"
+        android:persistent="false"
+        android:title="@string/end_time"></Preference>
+    <EditTextPreference
+        android:key="interval"
+        android:persistent="false"
+        android:title="@string/interval"></EditTextPreference>
+    <ListPreference
+        android:key="days_of_week"
+        android:persistent="false"
+        android:title="@string/days_of_week"
+        ></ListPreference>
+
+</PreferenceScreen>

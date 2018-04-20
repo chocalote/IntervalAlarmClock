@@ -170,8 +170,8 @@ public final class Alarm implements Parcelable {
         interval = parcel.readInt();
         intervalenabled = parcel.readInt() == 1;
         vibrate = parcel.readInt() == 1;
-        name= parcel.readString();
-        alert = parcel.readParcelable(null);
+        name = parcel.readString();
+        alert = parcel.readParcelable(getClass().getClassLoader());
         silent = parcel.readInt() == 1;
     }
 
@@ -205,8 +205,7 @@ public final class Alarm implements Parcelable {
         String alertStr = cursor.getString(Columns.ALARM_ALERT_INDEX);
 
         if (Alarms.ALARM_ALERT_SILENT.equals(alertStr)) {
-            if (true)
-                Log.v("Kunxun", "Alarm is marked as silent");
+            Log.v("Kunxun", "Alarm is marked as silent");
         } else {
             if (alertStr != null && alertStr.length() != 0) {
                 alert = Uri.parse(alertStr);
@@ -218,9 +217,8 @@ public final class Alarm implements Parcelable {
         }
     }
 
-    public String getMessageOrDefault(Context context){
-        if(name == null || name.length() ==0)
-        {
+    public String getMessageOrDefault(Context context) {
+        if (name == null || name.length() == 0) {
             return context.getString(R.string.default_label);
         }
         return name;
