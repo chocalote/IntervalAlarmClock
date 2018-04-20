@@ -38,7 +38,7 @@ public class AlarmProvider extends ContentProvider {
                     "intervalenabled INTEGER, " +
                     "enabled INTEGER, " +
                     "vibrate INTEGER, " +
-                    "message TEXT, " +
+                    "name TEXT, " +
                     "alert TEXT);";
 
             db.execSQL(sql);
@@ -46,7 +46,7 @@ public class AlarmProvider extends ContentProvider {
             // insert default alarms
             String insertSQL = "INSERT INTO alarms " +
                     "(starthour, startminutes, endhour, endminutes, daysofweek, " +
-                    "interval, intervalenabled, enabled, vibrate, message, alert) " +
+                    "interval, intervalenabled, enabled, vibrate, name, alert) " +
                     "VALUES ";
             db.execSQL(insertSQL + "(8, 30, 18, 0, 31, 60, 1, 1, 1, 'alarm', '');");
             db.execSQL(insertSQL + "(9, 00, 17, 30, 96, 30, 1, 0, 1, 'alarm', '');");
@@ -160,7 +160,7 @@ public class AlarmProvider extends ContentProvider {
         ContentValues values = new ContentValues(initialValues);
 
         SQLiteDatabase db = mDatabaseHelper.getWritableDatabase();
-        long rowId = db.insert("alarms", Alarm.Columns.MESSAGE, values);
+        long rowId = db.insert("alarms", Alarm.Columns.NAME, values);
         if (rowId < 0) {
             throw new SQLException("Failed to insert row into " + url);
         }

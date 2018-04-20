@@ -7,6 +7,7 @@ public class Alarms {
 
 
     public static final String ALARM_ALERT_SILENT = "silent";
+    public static final String ALARM_ID = "alarm_id";
 
 
     public static Cursor getAlarmCursor(ContentResolver contentResolver){

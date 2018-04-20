@@ -41,7 +41,7 @@ public final class Alarm implements Parcelable {
         parcel.writeInt(interval);
         parcel.writeInt(intervalenabled ? 1 : 0);
         parcel.writeInt(vibrate ? 1 : 0);
-        parcel.writeString(message);
+        parcel.writeString(name);
         parcel.writeParcelable(alert, flages);
         parcel.writeInt(silent ? 1 : 0);
     }
@@ -56,7 +56,7 @@ public final class Alarm implements Parcelable {
     public int interval;
     public boolean intervalenabled;
     public boolean vibrate;
-    public String message;
+    public String name;
     public Uri alert;
     public boolean silent;
 
@@ -72,13 +72,13 @@ public final class Alarm implements Parcelable {
         public static final String INTERVAL_ENABLED = "intervalenabled";
         public static final String ENABLED = "enabled";
         public static final String VIBRATE = "vibrate";
-        public static final String MESSAGE = "message";
+        public static final String NAME = "name";
         public static final String ALERT = "alert";
         public static final String DEFAULT_SORT_ORDER = START_HOUR + ", " + START_MINUTES + " ASC";
         public static final String WHERE_ENABLED = ENABLED + " = 1";
         public static final String WHERE_INTERVAL_ENABLED = INTERVAL_ENABLED + " = 1";
         static final String[] ALARM_QUERY_COLUMNS = {_ID, START_HOUR, START_MINUTES, END_HOUR, END_MINUTES,
-                DAYS_OF_WEEK, INTERVAL, INTERVAL_ENABLED, ENABLED, VIBRATE, MESSAGE, ALERT};
+                DAYS_OF_WEEK, INTERVAL, INTERVAL_ENABLED, ENABLED, VIBRATE, NAME, ALERT};
 
         public static final int ALARM_ID_INDEX = 0;
         public static final int ALARM_START_HOUR_INDEX = 1;
@@ -90,7 +90,7 @@ public final class Alarm implements Parcelable {
         public static final int ALARM_INTERVAL_ENABLED_INDEX = 7;
         public static final int ALARM_ENABLED_INDEX = 8;
         public static final int ALARM_VIBRATE_INDEX = 9;
-        public static final int ALARM_MESSAGE_INDEX = 10;
+        public static final int ALARM_NAME_INDEX = 10;
         public static final int ALARM_ALERT_INDEX = 11;
     }
 
@@ -170,7 +170,7 @@ public final class Alarm implements Parcelable {
         interval = parcel.readInt();
         intervalenabled = parcel.readInt() == 1;
         vibrate = parcel.readInt() == 1;
-        message = parcel.readString();
+        name= parcel.readString();
         alert = parcel.readParcelable(null);
         silent = parcel.readInt() == 1;
     }
@@ -201,7 +201,7 @@ public final class Alarm implements Parcelable {
         interval = cursor.getInt(Columns.ALARM_INTERVAL_INDEX);
         intervalenabled = cursor.getInt(Columns.ALARM_INTERVAL_ENABLED_INDEX) == 1;
         vibrate = cursor.getInt(Columns.ALARM_VIBRATE_INDEX) == 1;
-        message = cursor.getString(Columns.ALARM_MESSAGE_INDEX);
+        name = cursor.getString(Columns.ALARM_NAME_INDEX);
         String alertStr = cursor.getString(Columns.ALARM_ALERT_INDEX);
 
         if (Alarms.ALARM_ALERT_SILENT.equals(alertStr)) {
@@ -219,11 +219,11 @@ public final class Alarm implements Parcelable {
     }
 
     public String getMessageOrDefault(Context context){
-        if(message == null || message.length() ==0)
+        if(name == null || name.length() ==0)
         {
             return context.getString(R.string.default_label);
         }
-        return message;
+        return name;
     }
 
 }
