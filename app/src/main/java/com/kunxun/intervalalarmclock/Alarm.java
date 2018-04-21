@@ -157,6 +157,35 @@ public final class Alarm implements Parcelable {
         public int getCoded() {
             return mDays;
         }
+
+        private boolean isSet(int day) {
+            return ((mDays & (1 << day)) > 0);
+        }
+
+        public void set(int day, boolean set) {
+            if (set) {
+                mDays |= (1 << day);
+            } else {
+                mDays &= ~(1 << day);
+            }
+        }
+
+        public void set(DaysOfWeek dow)
+        {
+            mDays = dow.mDays;
+        }
+
+        public boolean isRepeatSet() {
+            return mDays != 0;
+        }
+
+        public boolean[] getBooleanArray() {
+            boolean[] ret = new boolean[7];
+            for (int i = 0; i < 7; i++) {
+                ret[i] = isSet(i);
+            }
+            return ret;
+        }
     }
 
     public Alarm(Parcel parcel) {

@@ -54,7 +54,7 @@ public class MainActivity extends Activity {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                startActivity(new Intent(MainActivity.this, AddSetActivity.class));
+                startActivity(new Intent(MainActivity.this, AddEditActivity.class));
             }
         });
         btnSetting = findViewById(R.id.btnSetting);

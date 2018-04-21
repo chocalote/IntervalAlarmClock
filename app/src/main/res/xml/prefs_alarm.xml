@@ -3,25 +3,50 @@
                   android:title="@string/add_layout_name">
     <Preference
         android:key="start_time"
-        android:persistent="false"
+        android:summary="8:00"
         android:title="@string/start_time"
-        ></Preference>
+        />
     <SwitchPreference
+        android:defaultValue="false"
         android:key="interval_enable"
-        android:persistent="false"
-        android:title="@string/interval_enabled"></SwitchPreference>
+        android:title="@string/interval_enabled"
+        />
     <Preference
+        android:dependency="interval_enable"
         android:key="end_time"
-        android:persistent="false"
-        android:title="@string/end_time"></Preference>
+        android:summary="18:00"
+        android:title="@string/end_time"
+        />
     <EditTextPreference
+        android:defaultValue="180"
+        android:dependency="interval_enable"
+        android:inputType="number"
         android:key="interval"
-        android:persistent="false"
-        android:title="@string/interval"></EditTextPreference>
-    <ListPreference
+        android:summary="180 minutes"
+        android:title="@string/interval"
+        />
+    <MultiSelectListPreference
+        android:entries="@array/week_days"
+        android:entryValues="@array/week_days"
         android:key="days_of_week"
-        android:persistent="false"
-        android:title="@string/days_of_week"
-        ></ListPreference>
+        android:title="@string/days_of_week"/>
+
+    <RingtonePreference
+        android:key="ringtone"
+        android:ringtoneType="alarm"
+        android:showDefault="true"
+        android:showSilent="true"
+        android:summary="Check a ringtone"
+        android:title="@string/alert"/>
+
+    <SwitchPreference
+        android:key="vibrate"
+        android:title="@string/vibrate"/>
+
+    <EditTextPreference
+        android:defaultValue="Alarm"
+        android:key="name"
+        android:summary="Alarm"
+        android:title="@string/alarm_name"/>
 
 </PreferenceScreen>
