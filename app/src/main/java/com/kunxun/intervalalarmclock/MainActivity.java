@@ -42,9 +42,9 @@ public class MainActivity extends Activity {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                Intent intent = new Intent(MainActivity.this, AddSetActivity.class);
-//                intent.putExtra(Alarms.ALARM_ID, (int) l);
-//                startActivity(intent);
+                Intent intent = new Intent(MainActivity.this, AddEditActivity.class);
+                intent.putExtra(Alarms.ALARM_ID, (int) l);
+                startActivity(intent);
             }
         });
 
@@ -82,9 +82,9 @@ public class MainActivity extends Activity {
 
             final Alarm alarm = new Alarm(cursor);
             final TextView itemTitle = view.findViewById(R.id.Item_Title);
-            String tmpStr = alarm.starthour + ":" + alarm.startminutes;
+            String tmpStr = alarm.starthour + ":" +  ((alarm.startminutes < 10) ? "0" + alarm.startminutes : alarm.startminutes);
             if (alarm.intervalenabled) {
-                tmpStr += "~" + alarm.endhour + ":" + alarm.endminutes + " ";
+                tmpStr += "~" + alarm.endhour + ":" + ((alarm.endminutes < 10) ? "0" + alarm.endminutes : alarm.endminutes) + " ";
                 tmpStr += alarm.interval + " minutes interval";
             }
 
