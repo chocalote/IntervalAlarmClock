@@ -54,6 +54,7 @@ public class AddEditActivity extends Activity {
             @Override
             public void onClick(View view) {
                 saveAlarm();
+                finish();
             }
         });
 
@@ -61,7 +62,7 @@ public class AddEditActivity extends Activity {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                finish();
             }
         });
 
@@ -69,7 +70,7 @@ public class AddEditActivity extends Activity {
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                finish();
             }
         });
 
@@ -81,7 +82,7 @@ public class AddEditActivity extends Activity {
         public SwitchPreference intervalEnabledPref, vibratePref;
         public MultiSelectListPreference daysOfWeekPref;
         public EditTextPreference intervalPref,alarmNamePref;
-        private int startHour = 8, startMinutes, endHour=18, endMinutes;
+        private Alarm mAlarm = new Alarm();
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -99,17 +100,15 @@ public class AddEditActivity extends Activity {
             alarmNamePref =(EditTextPreference) findPreference("name");
 
             int mId = getActivity().getIntent().getIntExtra(Alarms.ALARM_ID, -1);
-
-
             if (mId != -1) {
-                Alarm alarm = Alarms.getAlarm(getActivity().getContentResolver(), mId);
+                mAlarm = Alarms.getAlarm(getActivity().getContentResolver(), mId);
                 // Bad alarm, bail to avoid a NPE.
-                if (alarm == null) {
+                if (mAlarm == null) {
                     getActivity().finish();
                     return;
                 }
-                updatePrefs(alarm);
             }
+            updatePrefs();
         }
 
         @Override
@@ -121,11 +120,11 @@ public class AddEditActivity extends Activity {
                             public void onTimeSet(TimePicker timePicker, int i, int i1) {
                                 preference.setSummary(i + ":" + i1);
                                 if (preference == startTimePref) {
-                                    startHour = i;
-                                    startMinutes = i1;
+                                    mAlarm.starthour = i;
+                                    mAlarm.startminutes = i1;
                                 } else {
-                                    endHour = i;
-                                    endMinutes = i1;
+                                    mAlarm.endhour = i;
+                                    mAlarm.endminutes = i1;
                                 }
 
                             }
@@ -140,11 +139,13 @@ public class AddEditActivity extends Activity {
         public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
 
-
             daysOfWeekPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object o) {
-                    daysOfWeekPref.setSummary(o.toString());
+
+                    mAlarm.daysOfWeek.set(o.toString());
+                    daysOfWeekPref.setValues(mAlarm.daysOfWeek.getSetSelected());
+                    daysOfWeekPref.setSummary(mAlarm.daysOfWeek.toString(getActivity().getApplicationContext(),true));
                     return false;
                 }
             });
@@ -154,56 +155,53 @@ public class AddEditActivity extends Activity {
                 public boolean onPreferenceChange(Preference preference, Object o) {
                     Uri uri = Uri.parse(o.toString());
                     alertPref.setSummary(RingtoneManager.getRingtone(getActivity(), uri).getTitle(getActivity()));
+                    mAlarm.alert = uri;
                     return false;
                 }
             });
 
         }
 
-        private void updatePrefs(Alarm alarm) {
+        private void updatePrefs() {
 
-            startHour = alarm.starthour;
-            startMinutes = alarm.startminutes;
-            endHour = alarm.endhour;
-            endMinutes = alarm.endminutes;
-
-            String tmpStr = alarm.starthour + ":" + ((alarm.startminutes < 10) ? "0" + alarm.startminutes : alarm.startminutes);
+            String tmpStr = mAlarm.starthour + ":" + ((mAlarm.startminutes < 10) ? "0" + mAlarm.startminutes : mAlarm.startminutes);
             startTimePref.setSummary(tmpStr);
 
-            tmpStr = alarm.endhour + ":" + ((alarm.endminutes < 10) ? "0" + alarm.endminutes : alarm.endminutes);
+            tmpStr = mAlarm.endhour + ":" + ((mAlarm.endminutes < 10) ? "0" + mAlarm.endminutes : mAlarm.endminutes);
             endTimePref.setSummary(tmpStr);
 
-            intervalEnabledPref.setChecked(alarm.intervalenabled);
-            intervalPref.setSummary(alarm.interval + " minutes");
-            vibratePref.setChecked(alarm.vibrate);
-            alertPref.setSummary(RingtoneManager.getRingtone(getActivity(), alarm.alert).getTitle(getActivity()));
-            alarmNamePref.setSummary(alarm.name);
+            intervalEnabledPref.setChecked(mAlarm.intervalenabled);
+            intervalPref.setSummary(mAlarm.interval + " minutes");
+            vibratePref.setChecked(mAlarm.vibrate);
+            alertPref.setSummary(RingtoneManager.getRingtone(getActivity(), mAlarm.alert).getTitle(getActivity()));
+            alarmNamePref.setSummary(mAlarm.name);
 
-            daysOfWeekPref.setSummary(alarm.daysOfWeek.toString(getActivity().getApplicationContext(),true));
-            daysOfWeekPref.setValues(alarm.daysOfWeek.getSetSelected());
+            daysOfWeekPref.setSummary(mAlarm.daysOfWeek.toString(getActivity().getApplicationContext(),true));
+            daysOfWeekPref.setValues(mAlarm.daysOfWeek.getSetSelected());
         }
-
-
     }
 
     private void saveAlarm()
     {
         Alarm alarm = new Alarm();
         alarm.id = mId;
-        alarm.starthour = prefsAlarmFragment.startHour;
-        alarm.startminutes = prefsAlarmFragment.startMinutes;
+        alarm.starthour = prefsAlarmFragment.mAlarm.starthour;
+        alarm.startminutes = prefsAlarmFragment.mAlarm.startminutes;
         alarm.intervalenabled = prefsAlarmFragment.intervalEnabledPref.isChecked();
         alarm.interval= Integer.parseInt(prefsAlarmFragment.intervalPref.getText().toString());
-        alarm.endhour = prefsAlarmFragment.endHour;
-        alarm.endminutes = prefsAlarmFragment.endMinutes;
-        Set<String> selectStr = prefsAlarmFragment.daysOfWeekPref.getValues();
+        alarm.endhour = prefsAlarmFragment.mAlarm.endhour;
+        alarm.endminutes = prefsAlarmFragment.mAlarm.endminutes;
+        alarm.daysOfWeek = prefsAlarmFragment.mAlarm.daysOfWeek;
+        alarm.vibrate = prefsAlarmFragment.vibratePref.isChecked();
+        alarm.alert = prefsAlarmFragment.mAlarm.alert;
+        alarm.name = prefsAlarmFragment.alarmNamePref.getText();
 
-
-
-        if(mId == -1)
+        if (alarm.id == -1)
         {
-
+            Alarms.addAlarm(this,alarm);
+            mId = alarm.id;
         }
+
     }
 
 }

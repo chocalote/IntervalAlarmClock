@@ -118,12 +118,27 @@ public final class Alarm implements Parcelable {
                 Calendar.SUNDAY,
         };
 
-        public static String [] DAY_STRING_MAP = new String []{
-                "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+        public static String[] weekDays = new DateFormatSymbols().getWeekdays();
+        public static String[] DAY_STRING_MAP = new String[]{
+                weekDays[Calendar.MONDAY],
+                weekDays[Calendar.TUESDAY],
+                weekDays[Calendar.WEDNESDAY],
+                weekDays[Calendar.THURSDAY],
+                weekDays[Calendar.FRIDAY],
+                weekDays[Calendar.SATURDAY],
+                weekDays[Calendar.SUNDAY],
+
         };
 
-        public static String [] DAY_SHORT_STRING_MAP = new String []{
-                "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"
+        public static String[] shortWeekDays = new DateFormatSymbols().getShortWeekdays();
+        public static String[] DAY_SHORT_STRING_MAP = new String[]{
+                shortWeekDays[Calendar.MONDAY],
+                shortWeekDays[Calendar.TUESDAY],
+                shortWeekDays[Calendar.WEDNESDAY],
+                shortWeekDays[Calendar.THURSDAY],
+                shortWeekDays[Calendar.FRIDAY],
+                shortWeekDays[Calendar.SATURDAY],
+                shortWeekDays[Calendar.SUNDAY],
         };
 
         private int mDays;
@@ -137,9 +152,9 @@ public final class Alarm implements Parcelable {
 
             switch (mDays) {
                 case 0:
-                    return showNever ? context.getText(R.string.never).toString() : "";
+                    return showNever ? "[" + context.getText(R.string.never).toString() + "]" : "";
                 case 0x7f:
-                    return context.getText(R.string.everyday).toString();
+                    return "[" + context.getText(R.string.everyday).toString() + "]";
             }
 
             //count selected days
@@ -149,9 +164,7 @@ public final class Alarm implements Parcelable {
                 days >>= 1;
             }
 
-//            //short or long form?
-//            DateFormatSymbols dfs = new DateFormatSymbols();
-//            String[] dayList = dfs.getShortWeekdays();
+            ret.append("[");
 
             //selected days
             for (int i = 0; i < 7; i++) {
@@ -161,6 +174,7 @@ public final class Alarm implements Parcelable {
                     if (daycount > 0) ret.append(", ");
                 }
             }
+            ret.append("]");
             return ret.toString();
         }
 
@@ -180,9 +194,34 @@ public final class Alarm implements Parcelable {
             }
         }
 
-        public void set(DaysOfWeek dow)
-        {
+        public void set(DaysOfWeek dow) {
             mDays = dow.mDays;
+        }
+
+        public void set(String str) {
+            str = str.substring(1, str.length() - 1);
+            if (str.equals("Never")) {
+                mDays = 0;
+                return;
+            }
+            if (str.equals("Every day")) {
+                mDays = 0x7f;
+                return;
+            }
+
+
+            String[] selectDays = str.split(", ");
+            for (int i = 0; i < 7; i++) {
+                for (int j = 0; j < selectDays.length; j++) {
+                    if (DAY_SHORT_STRING_MAP[i].equals(selectDays[j])) {
+                        mDays |= (1 << i);
+                        break;
+                    }
+                    if (j == selectDays.length - 1) {
+                        mDays &= ~(1 << i);
+                    }
+                }
+            }
         }
 
         public boolean isRepeatSet() {
@@ -197,7 +236,7 @@ public final class Alarm implements Parcelable {
             return ret;
         }
 
-        public Set<String> getSetSelected(){
+        public Set<String> getSetSelected() {
             Set<String> ret = new HashSet<>();
 //            DateFormatSymbols dfs = new DateFormatSymbols();
 //            String[] dayList = dfs.getShortWeekdays();
@@ -206,6 +245,7 @@ public final class Alarm implements Parcelable {
                     ret.add(DAY_SHORT_STRING_MAP[i]);
                 }
             }
+
             return ret;
         }
     }
@@ -233,7 +273,7 @@ public final class Alarm implements Parcelable {
         c.setTimeInMillis(System.currentTimeMillis());
         starthour = c.get(Calendar.HOUR_OF_DAY);
         startminutes = c.get(Calendar.MINUTE);
-        interval = 0;
+        interval = 180;
         intervalenabled = false;
         enabled = true;
         vibrate = true;
