@@ -26,8 +26,6 @@
         android:title="@string/interval"
         />
     <MultiSelectListPreference
-        android:entries="@array/week_days"
-        android:entryValues="@array/week_days"
         android:key="days_of_week"
         android:title="@string/days_of_week"/>
 
@@ -48,5 +46,6 @@
         android:key="name"
         android:summary="Alarm"
         android:title="@string/alarm_name"/>
+
 
 </PreferenceScreen>

@@ -108,7 +108,7 @@ public final class Alarm implements Parcelable {
      * 0x40: Sunday
      */
     public static final class DaysOfWeek {
-        private static int[] DAY_MAP = new int[]{
+        public static int[] DAY_MAP = new int[]{
                 Calendar.MONDAY,
                 Calendar.TUESDAY,
                 Calendar.WEDNESDAY,
@@ -116,6 +116,14 @@ public final class Alarm implements Parcelable {
                 Calendar.FRIDAY,
                 Calendar.SATURDAY,
                 Calendar.SUNDAY,
+        };
+
+        public static String [] DAY_STRING_MAP = new String []{
+                "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+        };
+
+        public static String [] DAY_SHORT_STRING_MAP = new String []{
+                "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"
         };
 
         private int mDays;
@@ -141,14 +149,14 @@ public final class Alarm implements Parcelable {
                 days >>= 1;
             }
 
-            //short or long form?
-            DateFormatSymbols dfs = new DateFormatSymbols();
-            String[] dayList = (daycount > 1) ? dfs.getShortWeekdays() : dfs.getWeekdays();
+//            //short or long form?
+//            DateFormatSymbols dfs = new DateFormatSymbols();
+//            String[] dayList = dfs.getShortWeekdays();
 
             //selected days
             for (int i = 0; i < 7; i++) {
                 if ((mDays & (1 << i)) != 0) {
-                    ret.append(dayList[DAY_MAP[i]]);
+                    ret.append(DAY_SHORT_STRING_MAP[i]);
                     daycount--;
                     if (daycount > 0) ret.append(", ");
                 }
@@ -185,6 +193,18 @@ public final class Alarm implements Parcelable {
             boolean[] ret = new boolean[7];
             for (int i = 0; i < 7; i++) {
                 ret[i] = isSet(i);
+            }
+            return ret;
+        }
+
+        public Set<String> getSetSelected(){
+            Set<String> ret = new HashSet<>();
+//            DateFormatSymbols dfs = new DateFormatSymbols();
+//            String[] dayList = dfs.getShortWeekdays();
+            for (int i = 0; i < 7; i++) {
+                if ((mDays & (1 << i)) != 0) {
+                    ret.add(DAY_SHORT_STRING_MAP[i]);
+                }
             }
             return ret;
         }
