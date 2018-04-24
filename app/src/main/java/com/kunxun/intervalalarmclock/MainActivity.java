@@ -15,9 +15,11 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
+    static final String PREFERENCES = "IntervalAlarmClock";
     private LayoutInflater mFactory;
     private Cursor mCursor;
 
@@ -82,7 +84,7 @@ public class MainActivity extends Activity {
 
             final Alarm alarm = new Alarm(cursor);
             final TextView itemTitle = view.findViewById(R.id.Item_Title);
-            String tmpStr = alarm.starthour + ":" +  ((alarm.startminutes < 10) ? "0" + alarm.startminutes : alarm.startminutes);
+            String tmpStr = alarm.starthour + ":" + ((alarm.startminutes < 10) ? "0" + alarm.startminutes : alarm.startminutes);
             if (alarm.intervalenabled) {
                 tmpStr += "~" + alarm.endhour + ":" + ((alarm.endminutes < 10) ? "0" + alarm.endminutes : alarm.endminutes) + " ";
                 tmpStr += alarm.interval + " minutes interval";
@@ -104,6 +106,12 @@ public class MainActivity extends Activity {
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     itemTitle.setEnabled(b);
                     itemText.setEnabled(b);
+                    //Alarms.enableAlarm(MainActivity.this, alarm.id, b);
+                    if(b)
+                    {
+                        Toast.makeText(MainActivity.this, "aa",Toast.LENGTH_LONG).show();
+                    }
+
                 }
             });
         }

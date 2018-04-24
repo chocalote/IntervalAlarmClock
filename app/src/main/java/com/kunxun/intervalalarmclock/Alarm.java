@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Parcel;
+import android.os.ParcelUuid;
 import android.os.Parcelable;
 import android.provider.BaseColumns;
 import android.util.Log;
@@ -46,6 +47,7 @@ public final class Alarm implements Parcelable {
         parcel.writeString(name);
         parcel.writeParcelable(alert, flages);
         parcel.writeInt(silent ? 1 : 0);
+        parcel.writeLong(time);
     }
 
     public int id;
@@ -61,6 +63,7 @@ public final class Alarm implements Parcelable {
     public String name;
     public Uri alert;
     public boolean silent;
+    public long time;
 
 
     public static class Columns implements BaseColumns {
@@ -76,11 +79,12 @@ public final class Alarm implements Parcelable {
         public static final String VIBRATE = "vibrate";
         public static final String NAME = "name";
         public static final String ALERT = "alert";
+        public static final String TIME = "time";
         public static final String DEFAULT_SORT_ORDER = START_HOUR + ", " + START_MINUTES + " ASC";
         public static final String WHERE_ENABLED = ENABLED + " = 1";
         public static final String WHERE_INTERVAL_ENABLED = INTERVAL_ENABLED + " = 1";
         static final String[] ALARM_QUERY_COLUMNS = {_ID, START_HOUR, START_MINUTES, END_HOUR, END_MINUTES,
-                DAYS_OF_WEEK, INTERVAL, INTERVAL_ENABLED, ENABLED, VIBRATE, NAME, ALERT};
+                DAYS_OF_WEEK, INTERVAL, INTERVAL_ENABLED, ENABLED, VIBRATE, NAME, ALERT, TIME};
 
         public static final int ALARM_ID_INDEX = 0;
         public static final int ALARM_START_HOUR_INDEX = 1;
@@ -94,6 +98,7 @@ public final class Alarm implements Parcelable {
         public static final int ALARM_VIBRATE_INDEX = 9;
         public static final int ALARM_NAME_INDEX = 10;
         public static final int ALARM_ALERT_INDEX = 11;
+        public static final int ALARM_TIME_INDEX = 12;
     }
 
     /*
@@ -209,7 +214,6 @@ public final class Alarm implements Parcelable {
                 return;
             }
 
-
             String[] selectDays = str.split(", ");
             for (int i = 0; i < 7; i++) {
                 for (int j = 0; j < selectDays.length; j++) {
@@ -264,6 +268,7 @@ public final class Alarm implements Parcelable {
         name = parcel.readString();
         alert = parcel.readParcelable(getClass().getClassLoader());
         silent = parcel.readInt() == 1;
+        time = parcel.readLong();
     }
 
     //create a default alarm at the current time.
@@ -306,6 +311,7 @@ public final class Alarm implements Parcelable {
                 alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
             }
         }
+        time = cursor.getLong(Columns.ALARM_TIME_INDEX);
     }
 
     public String getMessageOrDefault(Context context) {

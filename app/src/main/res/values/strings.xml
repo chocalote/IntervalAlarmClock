@@ -15,5 +15,8 @@
     <string name="vibrate">Vibrate</string>
     <string name="alarm_name">Alarm Name</string>
 
+    <string name="delete_alarm">Delete Alarm</string>
+    <string name="delete_alarm_confirm">This alarm will be deleted!</string>
+
 
 </resources>

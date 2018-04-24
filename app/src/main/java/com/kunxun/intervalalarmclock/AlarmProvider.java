@@ -42,17 +42,18 @@ public class AlarmProvider extends ContentProvider {
                     "enabled INTEGER, " +
                     "vibrate INTEGER, " +
                     "name TEXT, " +
-                    "alert TEXT);";
+                    "alert TEXT," +
+                    "time INTEGER);";
 
             db.execSQL(sql);
 
             // insert default alarms
             String insertSQL = "INSERT INTO alarms " +
                     "(starthour, startminutes, endhour, endminutes, daysofweek, " +
-                    "interval, intervalenabled, enabled, vibrate, name, alert) " +
+                    "interval, intervalenabled, enabled, vibrate, name, alert, time) " +
                     "VALUES ";
-            db.execSQL(insertSQL + "(8, 30, 18, 0, 31, 60, 1, 1, 1, 'alarm', '');");
-            db.execSQL(insertSQL + "(9, 00, 17, 30, 96, 30, 1, 0, 1, 'alarm', '');");
+            db.execSQL(insertSQL + "(8, 30, 18, 0, 31, 60, 1, 1, 1, 'alarm', '', 0);");
+            db.execSQL(insertSQL + "(9, 00, 17, 30, 96, 30, 1, 0, 1, 'alarm', '', 0);");
         }
 
         @Override
@@ -87,7 +88,8 @@ public class AlarmProvider extends ContentProvider {
     }
 
     @Override
-    public Cursor query(@NonNull Uri url, String[] projectionIn, String selection, String[] selectionArgs, String sort) {
+    public Cursor query(@NonNull Uri url, String[] projectionIn,
+                        String selection, String[] selectionArgs, String sort) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 
         int match = sURLMatcher.match(url);
@@ -132,7 +134,8 @@ public class AlarmProvider extends ContentProvider {
     }
 
     @Override
-    public int update(@NonNull Uri url, ContentValues values, String where, String[] whereArgs){
+    public int update(@NonNull Uri url, ContentValues values,
+                      String where, String[] whereArgs){
         int count;
         long rowId;
         int match = sURLMatcher.match(url);

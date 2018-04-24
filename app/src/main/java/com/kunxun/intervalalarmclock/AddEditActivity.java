@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,13 +20,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class AddEditActivity extends Activity {
 
     private int mId;
     private PrefsAlarmFragment prefsAlarmFragment = new PrefsAlarmFragment();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,11 +38,9 @@ public class AddEditActivity extends Activity {
 
         mId = getIntent().getIntExtra(Alarms.ALARM_ID, -1);
         Log.v("Kunxun", "In AddEditAlarm, alarm id = " + mId);
-        if(mId != -1)
-        {
+        if (mId != -1) {
             title.setText(R.string.edit_layout_name);
-        }
-        else {
+        } else {
             title.setText(R.string.add_layout_name);
         }
 
@@ -70,34 +65,34 @@ public class AddEditActivity extends Activity {
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                deleteAlarm();
             }
         });
-
     }
 
     public static class PrefsAlarmFragment extends PreferenceFragment {
 
-        public Preference startTimePref, endTimePref,  alertPref;
+        public Preference startTimePref, endTimePref, alertPref;
         public SwitchPreference intervalEnabledPref, vibratePref;
         public MultiSelectListPreference daysOfWeekPref;
-        public EditTextPreference intervalPref,alarmNamePref;
+        public EditTextPreference intervalPref, alarmNamePref;
         private Alarm mAlarm = new Alarm();
+
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.prefs_alarm);
             startTimePref = findPreference("start_time");
             endTimePref = findPreference("end_time");
-            intervalPref = (EditTextPreference)findPreference("interval");
+            intervalPref = (EditTextPreference) findPreference("interval");
             intervalEnabledPref = (SwitchPreference) findPreference("interval_enable");
-            daysOfWeekPref = (MultiSelectListPreference)findPreference("days_of_week");
+            daysOfWeekPref = (MultiSelectListPreference) findPreference("days_of_week");
             daysOfWeekPref.setEntries(Alarm.DaysOfWeek.DAY_STRING_MAP);
             daysOfWeekPref.setEntryValues(Alarm.DaysOfWeek.DAY_SHORT_STRING_MAP);
 
             vibratePref = (SwitchPreference) findPreference("vibrate");
             alertPref = findPreference("ringtone");
-            alarmNamePref =(EditTextPreference) findPreference("name");
+            alarmNamePref = (EditTextPreference) findPreference("name");
 
             int mId = getActivity().getIntent().getIntExtra(Alarms.ALARM_ID, -1);
             if (mId != -1) {
@@ -145,7 +140,7 @@ public class AddEditActivity extends Activity {
 
                     mAlarm.daysOfWeek.set(o.toString());
                     daysOfWeekPref.setValues(mAlarm.daysOfWeek.getSetSelected());
-                    daysOfWeekPref.setSummary(mAlarm.daysOfWeek.toString(getActivity().getApplicationContext(),true));
+                    daysOfWeekPref.setSummary(mAlarm.daysOfWeek.toString(getActivity().getApplicationContext(), true));
                     return false;
                 }
             });
@@ -176,19 +171,18 @@ public class AddEditActivity extends Activity {
             alertPref.setSummary(RingtoneManager.getRingtone(getActivity(), mAlarm.alert).getTitle(getActivity()));
             alarmNamePref.setSummary(mAlarm.name);
 
-            daysOfWeekPref.setSummary(mAlarm.daysOfWeek.toString(getActivity().getApplicationContext(),true));
+            daysOfWeekPref.setSummary(mAlarm.daysOfWeek.toString(getActivity().getApplicationContext(), true));
             daysOfWeekPref.setValues(mAlarm.daysOfWeek.getSetSelected());
         }
     }
 
-    private void saveAlarm()
-    {
+    private void saveAlarm() {
         Alarm alarm = new Alarm();
         alarm.id = mId;
         alarm.starthour = prefsAlarmFragment.mAlarm.starthour;
         alarm.startminutes = prefsAlarmFragment.mAlarm.startminutes;
         alarm.intervalenabled = prefsAlarmFragment.intervalEnabledPref.isChecked();
-        alarm.interval= Integer.parseInt(prefsAlarmFragment.intervalPref.getText().toString());
+        alarm.interval = Integer.parseInt(prefsAlarmFragment.intervalPref.getText());
         alarm.endhour = prefsAlarmFragment.mAlarm.endhour;
         alarm.endminutes = prefsAlarmFragment.mAlarm.endminutes;
         alarm.daysOfWeek = prefsAlarmFragment.mAlarm.daysOfWeek;
@@ -196,12 +190,27 @@ public class AddEditActivity extends Activity {
         alarm.alert = prefsAlarmFragment.mAlarm.alert;
         alarm.name = prefsAlarmFragment.alarmNamePref.getText();
 
-        if (alarm.id == -1)
-        {
-            Alarms.addAlarm(this,alarm);
+        if (alarm.id == -1) {
+            Alarms.addAlarm(this, alarm);
             mId = alarm.id;
+        } else {
+            Alarms.updateAlarm(this, alarm);
         }
+    }
 
+    private void deleteAlarm() {
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.delete_alarm))
+                .setMessage(getString(R.string.delete_alarm_confirm))
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Alarms.deleteAlarm(AddEditActivity.this, mId);
+                        finish();
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
     }
 
 }
