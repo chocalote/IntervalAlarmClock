@@ -2,6 +2,8 @@
     <string name="app_name">间隔闹钟</string>
     <string name="add_layout_name">新增闹钟</string>
     <string name="edit_layout_name">编辑闹钟</string>
+    <string name="setting_layout_name">设置</string>
+
     <string name="never">从不</string>
     <string name="everyday">每天</string>
     <string name="default_label">闹钟</string>
@@ -19,20 +21,65 @@
     <string name="delete_alarm_confirm">将会删除该闹钟！</string>
 
     <string-array name="alarm_set">
-        <item msgid="5163476010406761625">"将在不到 1 分钟后响铃"</item>
-        <item msgid="7110525731259629055">"将在<xliff:g id="DAYS">%1$s</xliff:g>后响铃"</item>
-        <item msgid="7003982794086186185">"将在<xliff:g id="HOURS">%2$s</xliff:g>后响铃"</item>
-        <item msgid="7311021123230077742">"将在<xliff:g id="DAYS">%1$s</xliff:g> <xliff:g id="HOURS">%2$s</xliff:g>后响铃"</item>
-        <item msgid="8431715191823114872">"将在<xliff:g id="MINUTES">%3$s</xliff:g>后响铃"</item>
-        <item msgid="3244151088673185428">"将在<xliff:g id="DAYS">%1$s</xliff:g> <xliff:g id="MINUTES">%3$s</xliff:g>后响铃"</item>
-        <item msgid="3663661342600168814">"将在<xliff:g id="HOURS">%2$s</xliff:g> <xliff:g id="MINUTES">%3$s</xliff:g>后响铃"</item>
-        <item msgid="7779544127785487304">"将在<xliff:g id="DAYS">%1$s</xliff:g> <xliff:g id="HOURS">%2$s</xliff:g> <xliff:g id="MINUTES">%3$s</xliff:g>后响铃"</item>
+        <item>"将在不到 1 分钟后响铃"</item>
+        <item>"将在<xliff:g id="DAYS">%1$s</xliff:g>后响铃"</item>
+        <item>"将在<xliff:g id="HOURS">%2$s</xliff:g>后响铃"</item>
+        <item>"将在<xliff:g id="DAYS">%1$s</xliff:g> <xliff:g id="HOURS">%2$s</xliff:g>后响铃"</item>
+        <item>"将在<xliff:g id="MINUTES">%3$s</xliff:g>后响铃"</item>
+        <item>"将在<xliff:g id="DAYS">%1$s</xliff:g> <xliff:g id="MINUTES">%3$s</xliff:g>后响铃"</item>
+        <item>"将在<xliff:g id="HOURS">%2$s</xliff:g> <xliff:g id="MINUTES">%3$s</xliff:g>后响铃"</item>
+        <item>"将在<xliff:g id="DAYS">%1$s</xliff:g> <xliff:g id="HOURS">%2$s</xliff:g> <xliff:g id="MINUTES">%3$s</xliff:g>后响铃"</item>
     </string-array>
     <string name="day">"1 天"</string>
     <string name="days">"<xliff:g id="DAYS">%s</xliff:g> 天"</string>
     <string name="hour">"1 小时"</string>
-    <string name="hours" msgid="2071487018566991613">"<xliff:g id="HOURS">%s</xliff:g> 小时"</string>
+    <string name="hours">"<xliff:g id="HOURS">%s</xliff:g> 小时"</string>
     <string name="minute">"1 分钟"</string>
     <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> 分钟"</string>
 
+    <string name="silent_alert_title">静音模式闹钟响铃</string>
+    <string name="silent_alert_summary">手机处于静音模式时，闹钟仍会响铃</string>
+    <string name="alert_duration">响铃时长</string>
+    <string-array name="alert_duration_entries">
+        <item>1 分钟</item>
+        <item>5 分钟</item>
+        <item>10 分钟</item>
+        <item>15 分钟</item>
+        <item>20 分钟</item>
+        <item>30 分钟</item>
+    </string-array>
+    <string-array name="alert_duration_values">
+        <item>1</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>30</item>
+    </string-array>
+    <string name="snooze_duration">再响设置</string>
+    <string-array name="snooze_duration_entries">
+        <item>5 分钟</item>
+        <item>10 分钟</item>
+        <item>15 分钟</item>
+        <item>20 分钟</item>
+        <item>25 分钟</item>
+        <item>30 分钟</item>
+    </string-array>
+    <string-array name="snooze_duration_values">
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>25</item>
+        <item>30</item>
+    </string-array>
+
+    <string name="volume_button">音量按钮</string>
+    <string name="volume_button_summary">设置音量键在响铃时的作用</string>
+    <string-array name="volume_button_entries">
+        <item>无</item>
+        <item>静音</item>
+        <item>暂停</item>
+        <item>关闭</item>
+    </string-array>
 </resources>

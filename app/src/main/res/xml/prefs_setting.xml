@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:title="@string/setting_layout_name">
+    <SwitchPreference
+        android:key="alarm_in_silent_mode"
+        android:summary="@string/silent_alert_summary"
+        android:title="@string/silent_alert_title"
+        android:defaultValue="true"/>
+
+    <ListPreference
+        android:entries="@array/alert_duration_entries"
+        android:entryValues="@array/alert_duration_values"
+        android:key="alert_duration"
+        android:title="@string/alert_duration"
+        android:defaultValue="1"/>
+
+    <ListPreference
+        android:entries="@array/snooze_duration_entries"
+        android:entryValues="@array/snooze_duration_values"
+        android:key="snooze_duration"
+        android:title="@string/snooze_duration"
+        android:defaultValue="10"/>
+
+    <ListPreference
+        android:entries="@array/volume_button_entries"
+        android:entryValues="@array/volume_button_entries"
+        android:key="volume_button"
+        android:summary="@string/volume_button_summary"
+        android:title="@string/volume_button"
+        android:defaultValue="静音"/>
+
+</PreferenceScreen>

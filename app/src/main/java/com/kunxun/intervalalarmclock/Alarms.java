@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Parcel;
+import android.provider.Settings;
 import android.util.Log;
 import java.util.Calendar;
 
@@ -364,26 +365,32 @@ public class Alarms {
         assert am != null;
         am.set(AlarmManager.RTC_WAKEUP, atTimeInMillis, sender);
 
-        setStatusBarIcon(context);
+        setStatusBarIcon(context,true);
 
 //        Calendar c = Calendar.getInstance();
 //        c.setTimeInMillis(atTimeInMillis);
 //        String format = android.text.format.DateFormat.is24HourFormat(context) ? "E k:mm" : "E h:mm aa";
 //        String timeString = (String) android.text.format.DateFormat.format(format, c);
-
+//
 //        saveNextAlarm(context, timeString);
     }
 
     private static void disableAlert(Context context) {
+        AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        PendingIntent sender = PendingIntent.getBroadcast(context, 0,
+                new Intent(ALARM_ALERT_ACTION),PendingIntent.FLAG_CANCEL_CURRENT);
 
+        am.cancel(sender);
+        setStatusBarIcon(context,false);
+//        saveNextAlarm(context, "");
     }
 
     /**
      * Tells the StatusBar whether the alarm is enabled or disabled
      */
-    private static void setStatusBarIcon(Context context) {
+    private static void setStatusBarIcon(Context context, boolean enabled) {
         Intent alarmChanged = new Intent("android.intent.action.ALARM_CHANGED");
-        alarmChanged.putExtra("alarmSet", true);
+        alarmChanged.putExtra("alarmSet", enabled);
         context.sendBroadcast(alarmChanged);
     }
 

@@ -212,5 +212,4 @@ public class AddEditActivity extends Activity {
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }
-
 }
