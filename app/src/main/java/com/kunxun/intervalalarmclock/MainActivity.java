@@ -33,7 +33,6 @@ public class MainActivity extends Activity {
         updateLayout();
     }
 
-
     private void updateLayout() {
         ListView mListView = findViewById(R.id.mListView);
 
@@ -80,14 +79,14 @@ public class MainActivity extends Activity {
         }
 
         @Override
-        public void bindView(View view, Context context, Cursor cursor) {
+        public void bindView(View view, final Context context, Cursor cursor) {
 
             final Alarm alarm = new Alarm(cursor);
             final TextView itemTitle = view.findViewById(R.id.Item_Title);
             String tmpStr = alarm.starthour + ":" + ((alarm.startminutes < 10) ? "0" + alarm.startminutes : alarm.startminutes);
             if (alarm.intervalenabled) {
-                tmpStr += "~" + alarm.endhour + ":" + ((alarm.endminutes < 10) ? "0" + alarm.endminutes : alarm.endminutes) + " ";
-                tmpStr += alarm.interval + " minutes interval";
+                tmpStr += "~" + alarm.endhour + ":" + ((alarm.endminutes < 10) ? "0" + alarm.endminutes : alarm.endminutes) + ", ";
+                tmpStr += alarm.interval + "分钟间隔";
             }
 
             itemTitle.setText(tmpStr);
@@ -106,15 +105,37 @@ public class MainActivity extends Activity {
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     itemTitle.setEnabled(b);
                     itemText.setEnabled(b);
-                    //Alarms.enableAlarm(MainActivity.this, alarm.id, b);
+                    Alarms.enableAlarm(MainActivity.this, alarm.id, b);
                     if(b)
                     {
-                        Toast.makeText(MainActivity.this, "aa",Toast.LENGTH_LONG).show();
+                        alarm.time = Alarms.calculateAlarm(alarm);
+                        Toast.makeText(MainActivity.this, formatToast(MainActivity.this,alarm.time),Toast.LENGTH_LONG).show();
                     }
 
                 }
             });
         }
+    }
+
+    public static String formatToast(Context context, long timeInMillis) {
+        long delta = timeInMillis - System.currentTimeMillis();
+        long hours = delta / (1000 * 60 * 60);
+        long minutes = delta / (1000 * 60) % 60;
+        long days;
+        days = hours / 24;
+        hours = hours % 24;
+
+        String daySeq = (days == 0) ? "" : ((days == 1) ? context.getString(R.string.day) : context.getString(R.string.days, Long.toString(days)));
+        String hourSeq = (hours == 0) ? "" : ((hours == 1) ? context.getString(R.string.hour) : context.getString(R.string.hours, Long.toString(hours)));
+        String minSeq = (minutes == 0) ? "" : ((minutes == 1) ? context.getString(R.string.minute) : context.getString(R.string.minutes, Long.toString(minutes)));
+
+        boolean dispDays = days > 0;
+        boolean dispHour = hours > 0;
+        boolean dispMinute = minutes > 0;
+
+        int index = (dispDays ? 1 : 0) | (dispHour ? 2 : 0) | (dispMinute ? 4 : 0);
+        String[] format = context.getResources().getStringArray(R.array.alarm_set);
+        return String.format(format[index], daySeq, hourSeq, minSeq);
     }
 
     @Override

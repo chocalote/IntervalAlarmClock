@@ -40,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Add"/>
+            android:text="新增"/>
 
         <Button
             android:id="@+id/btnSetting"
@@ -48,7 +48,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
-            android:text="Setting" />
+            android:text="设置"/>
 
     </LinearLayout>
 

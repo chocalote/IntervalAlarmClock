@@ -52,8 +52,8 @@ public class AlarmProvider extends ContentProvider {
                     "(starthour, startminutes, endhour, endminutes, daysofweek, " +
                     "interval, intervalenabled, enabled, vibrate, name, alert, time) " +
                     "VALUES ";
-            db.execSQL(insertSQL + "(8, 30, 18, 0, 31, 60, 1, 1, 1, 'alarm', '', 0);");
-            db.execSQL(insertSQL + "(9, 00, 17, 30, 96, 30, 1, 0, 1, 'alarm', '', 0);");
+            db.execSQL(insertSQL + "(8, 30, 18, 0, 31, 60, 1, 1, 1, '闹钟', '', 0);");
+            db.execSQL(insertSQL + "(9, 00, 17, 30, 96, 30, 1, 0, 1, '闹钟', '', 0);");
         }
 
         @Override

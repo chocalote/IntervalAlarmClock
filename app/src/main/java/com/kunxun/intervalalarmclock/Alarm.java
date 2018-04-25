@@ -5,11 +5,9 @@ import android.database.Cursor;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Parcel;
-import android.os.ParcelUuid;
 import android.os.Parcelable;
 import android.provider.BaseColumns;
 import android.util.Log;
-
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
 import java.util.HashSet;
@@ -113,17 +111,17 @@ public final class Alarm implements Parcelable {
      * 0x40: Sunday
      */
     public static final class DaysOfWeek {
-        public static int[] DAY_MAP = new int[]{
-                Calendar.MONDAY,
-                Calendar.TUESDAY,
-                Calendar.WEDNESDAY,
-                Calendar.THURSDAY,
-                Calendar.FRIDAY,
-                Calendar.SATURDAY,
-                Calendar.SUNDAY,
-        };
+//        public static int[] DAY_MAP = new int[]{
+//                Calendar.MONDAY,
+//                Calendar.TUESDAY,
+//                Calendar.WEDNESDAY,
+//                Calendar.THURSDAY,
+//                Calendar.FRIDAY,
+//                Calendar.SATURDAY,
+//                Calendar.SUNDAY,
+//        };
 
-        public static String[] weekDays = new DateFormatSymbols().getWeekdays();
+        private static String[] weekDays = new DateFormatSymbols().getWeekdays();
         public static String[] DAY_STRING_MAP = new String[]{
                 weekDays[Calendar.MONDAY],
                 weekDays[Calendar.TUESDAY],
@@ -135,7 +133,7 @@ public final class Alarm implements Parcelable {
 
         };
 
-        public static String[] shortWeekDays = new DateFormatSymbols().getShortWeekdays();
+        private static String[] shortWeekDays = new DateFormatSymbols().getShortWeekdays();
         public static String[] DAY_SHORT_STRING_MAP = new String[]{
                 shortWeekDays[Calendar.MONDAY],
                 shortWeekDays[Calendar.TUESDAY],
@@ -191,17 +189,17 @@ public final class Alarm implements Parcelable {
             return ((mDays & (1 << day)) > 0);
         }
 
-        public void set(int day, boolean set) {
-            if (set) {
-                mDays |= (1 << day);
-            } else {
-                mDays &= ~(1 << day);
-            }
-        }
+//        public void set(int day, boolean set) {
+//            if (set) {
+//                mDays |= (1 << day);
+//            } else {
+//                mDays &= ~(1 << day);
+//            }
+//        }
 
-        public void set(DaysOfWeek dow) {
-            mDays = dow.mDays;
-        }
+//        public void set(DaysOfWeek dow) {
+//            mDays = dow.mDays;
+//        }
 
         public void set(String str) {
             str = str.substring(1, str.length() - 1);
@@ -228,17 +226,17 @@ public final class Alarm implements Parcelable {
             }
         }
 
-        public boolean isRepeatSet() {
-            return mDays != 0;
+        public boolean nonRepeatSet() {
+            return mDays == 0;
         }
 
-        public boolean[] getBooleanArray() {
-            boolean[] ret = new boolean[7];
-            for (int i = 0; i < 7; i++) {
-                ret[i] = isSet(i);
-            }
-            return ret;
-        }
+//        public boolean[] getBooleanArray() {
+//            boolean[] ret = new boolean[7];
+//            for (int i = 0; i < 7; i++) {
+//                ret[i] = isSet(i);
+//            }
+//            return ret;
+//        }
 
         public Set<String> getSetSelected() {
             Set<String> ret = new HashSet<>();
@@ -252,9 +250,27 @@ public final class Alarm implements Parcelable {
 
             return ret;
         }
+
+        /**
+         * returns number of days from today until next alarm
+         *
+         * @param c must be set to today
+         */
+        public int getNextAlarmDay(Calendar c) {
+            if (mDays == 0)
+                return -1;
+            int today = (c.get(Calendar.DAY_OF_WEEK) + 5) % 7;
+            int day, dayCount = 0;
+            for (; dayCount < 7; dayCount++) {
+                day = (today + dayCount) % 7;
+                if (isSet(day))
+                    break;
+            }
+            return dayCount;
+        }
     }
 
-    public Alarm(Parcel parcel) {
+    private Alarm(Parcel parcel) {
         id = parcel.readInt();
         enabled = parcel.readInt() == 1;
         starthour = parcel.readInt();
@@ -314,11 +330,11 @@ public final class Alarm implements Parcelable {
         time = cursor.getLong(Columns.ALARM_TIME_INDEX);
     }
 
-    public String getMessageOrDefault(Context context) {
-        if (name == null || name.length() == 0) {
-            return context.getString(R.string.default_label);
-        }
-        return name;
-    }
+//    public String getMessageOrDefault(Context context) {
+//        if (name == null || name.length() == 0) {
+//            return context.getString(R.string.default_label);
+//        }
+//        return name;
+//    }
 
 }

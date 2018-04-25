@@ -12,7 +12,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Parcel;
-import android.provider.Settings;
 import android.util.Log;
 import java.util.Calendar;
 
@@ -60,7 +59,7 @@ public class Alarms {
         // Set the alarm_time value if this alarm does not repeat. This will be
         // used later to disable expire alarms.
         long time = 0;
-        if (!alarm.daysOfWeek.isRepeatSet()) {
+        if (alarm.daysOfWeek.nonRepeatSet()) {
             time = calculateAlarm(alarm);
         }
 
@@ -111,16 +110,17 @@ public class Alarms {
     /**
      * Creates a new Alarm and fills in the given alarm's id.
      */
-    public static long addAlarm(Context context, Alarm alarm) {
+    public static void addAlarm(Context context, Alarm alarm) {
+        long timeInMillis = calculateAlarm(alarm);
+        alarm.time = timeInMillis;
         ContentValues values = createContentValues(alarm);
         Uri uri = context.getContentResolver().insert(Alarm.Columns.CONTENT_URI, values);
         alarm.id = (int) ContentUris.parseId(uri);
-        long timeInMillis = calculateAlarm(alarm);
+
         if (alarm.enabled) {
             clearSnoozeIfNeeded(context, timeInMillis);
         }
         setNextAlert(context);
-        return timeInMillis;
     }
 
     /**
@@ -141,15 +141,13 @@ public class Alarms {
     /**
      * A convenience method to update an alarm in the Alarms
      * content provider.
-     *
-     * @return Time when the alarm will fire.
      */
-    public static long updateAlarm(Context context, Alarm alarm) {
+    public static void updateAlarm(Context context, Alarm alarm) {
+        long timeInMillis = calculateAlarm(alarm);
+        alarm.time = timeInMillis;
         ContentValues values = createContentValues(alarm);
         ContentResolver resolver = context.getContentResolver();
         resolver.update(ContentUris.withAppendedId(Alarm.Columns.CONTENT_URI, alarm.id), values, null, null);
-
-        long timeInMillis = calculateAlarm(alarm);
         if (alarm.enabled) {
             // Disable the snooze if we just changed the snoozed alarm. This
             // only does work if the snoozed alarm is the same as the given
@@ -163,7 +161,6 @@ public class Alarms {
         }
 
         setNextAlert(context);
-        return timeInMillis;
     }
 
     /**
@@ -196,7 +193,7 @@ public class Alarms {
         // value in Alarm may be old.
         if (enabled) {
             long time = 0;
-            if (!alarm.daysOfWeek.isRepeatSet()) {
+            if (alarm.daysOfWeek.nonRepeatSet()) {
                 time = calculateAlarm(alarm);
             }
             values.put(Alarm.Columns.TIME, time);
@@ -209,7 +206,7 @@ public class Alarms {
                 Alarm.Columns.CONTENT_URI, alarm.id), values, null, null);
     }
 
-    public static Alarm calculateNextAlert(final Context context) {
+    private static Alarm calculateNextAlert(final Context context) {
         Alarm alarm = null;
         long minTime = Long.MAX_VALUE;
         long now = System.currentTimeMillis();
@@ -235,7 +232,7 @@ public class Alarms {
         return alarm;
     }
 
-    private static long calculateAlarm(Alarm alarm) {
+    public static long calculateAlarm(Alarm alarm) {
         Calendar c = Calendar.getInstance();
         int nowTime = c.get(Calendar.HOUR_OF_DAY) * 60 + c.get(Calendar.MINUTE);
         int alarmStartTime = alarm.starthour * 60 + alarm.startminutes;
@@ -247,25 +244,29 @@ public class Alarms {
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
 
-        if (!alarm.intervalenabled) {
-            if (nowTime > alarmStartTime) {
-                c.add(Calendar.DAY_OF_YEAR, 1);
-            }
+        int addDays = alarm.daysOfWeek.getNextAlarmDay(c);
+        if (addDays > 0) {
+            c.add(Calendar.DAY_OF_WEEK, addDays);
         } else {
-            if (nowTime > alarmEndTime) {
-                c.add(Calendar.DAY_OF_YEAR, 1);
-            } else if (nowTime > alarmStartTime) {
-                int i = 1;
-                while (nowTime <= alarmEndTime) {
-                    if (nowTime <= (alarmStartTime + i * alarm.interval)) {
-                        c.add(Calendar.MINUTE, i * alarm.interval);
-                        break;
+            if (!alarm.intervalenabled) {
+                if (nowTime > alarmStartTime) {
+                    c.add(Calendar.DAY_OF_YEAR, 1);
+                }
+            } else {
+                if (nowTime > alarmEndTime) {
+                    c.add(Calendar.DAY_OF_YEAR, 1);
+                } else if (nowTime > alarmStartTime) {
+                    int i = 1;
+                    while (nowTime <= alarmEndTime) {
+                        if (nowTime <= (alarmStartTime + i * alarm.interval)) {
+                            c.add(Calendar.MINUTE, i * alarm.interval);
+                            break;
+                        }
+                        i++;
                     }
-                    i++;
                 }
             }
         }
-
         return c.getTimeInMillis();
     }
 
@@ -321,7 +322,7 @@ public class Alarms {
      * the user changes alarm settings.  Activates snooze if set,
      * otherwise loads all alarms, activates next alert.
      */
-    public static void setNextAlert(final Context context) {
+    private static void setNextAlert(final Context context) {
 
         if (!enableSnoozeAlert(context)) {
             Alarm alarm = calculateNextAlert(context);
@@ -363,14 +364,14 @@ public class Alarms {
         assert am != null;
         am.set(AlarmManager.RTC_WAKEUP, atTimeInMillis, sender);
 
-        setStatusBarIcon(context, true);
+        setStatusBarIcon(context);
 
-        Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(atTimeInMillis);
-        String format = android.text.format.DateFormat.is24HourFormat(context) ? "E k:mm" : "E h:mm aa";
-        String timeString = (String) android.text.format.DateFormat.format(format, c);
+//        Calendar c = Calendar.getInstance();
+//        c.setTimeInMillis(atTimeInMillis);
+//        String format = android.text.format.DateFormat.is24HourFormat(context) ? "E k:mm" : "E h:mm aa";
+//        String timeString = (String) android.text.format.DateFormat.format(format, c);
 
-        saveNextAlarm(context, timeString);
+//        saveNextAlarm(context, timeString);
     }
 
     private static void disableAlert(Context context) {
@@ -380,18 +381,18 @@ public class Alarms {
     /**
      * Tells the StatusBar whether the alarm is enabled or disabled
      */
-    private static void setStatusBarIcon(Context context, boolean enabled) {
+    private static void setStatusBarIcon(Context context) {
         Intent alarmChanged = new Intent("android.intent.action.ALARM_CHANGED");
-        alarmChanged.putExtra("alarmSet", enabled);
+        alarmChanged.putExtra("alarmSet", true);
         context.sendBroadcast(alarmChanged);
     }
 
-    /**
-     * Save time of the next alarm, as a formatted string, into the system
-     * settings so those who care can make use of it.
-     */
-    private static void saveNextAlarm(final Context context, String timeString) {
-        Settings.System.putString(context.getContentResolver(), Settings.System.NEXT_ALARM_FORMATTED, timeString);
-    }
+//    /**
+//     * Save time of the next alarm, as a formatted string, into the system
+//     * settings so those who care can make use of it.
+//     */
+//    private static void saveNextAlarm(final Context context, String timeString) {
+//        Settings.System.putString(context.getContentResolver(), Settings.System.NEXT_ALARM_FORMATTED, timeString);
+//    }
 
 }

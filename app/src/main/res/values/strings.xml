@@ -1,22 +1,38 @@
-<resources>
-    <string name="app_name">Interval Alarm Clock</string>
-    <string name="add_layout_name">New Alarm</string>
-    <string name="edit_layout_name">Edit Alarm</string>
-    <string name="never">Never</string>
-    <string name="everyday">Every Day</string>
-    <string name="default_label">Alarm</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">间隔闹钟</string>
+    <string name="add_layout_name">新增闹钟</string>
+    <string name="edit_layout_name">编辑闹钟</string>
+    <string name="never">从不</string>
+    <string name="everyday">每天</string>
+    <string name="default_label">闹钟</string>
 
-    <string name="start_time">Start Time</string>
-    <string name="end_time">End Time</string>
-    <string name="interval_enabled">Interval</string>
-    <string name="interval">Interval Time</string>
-    <string name="days_of_week">Repeat</string>
-    <string name="alert">Ring</string>
-    <string name="vibrate">Vibrate</string>
-    <string name="alarm_name">Alarm Name</string>
+    <string name="start_time">开始时间</string>
+    <string name="end_time">结束时间</string>
+    <string name="interval_enabled">间隔</string>
+    <string name="interval">间隔时间</string>
+    <string name="days_of_week">重复</string>
+    <string name="alert">铃声</string>
+    <string name="vibrate">振动</string>
+    <string name="alarm_name">闹钟名</string>
 
-    <string name="delete_alarm">Delete Alarm</string>
-    <string name="delete_alarm_confirm">This alarm will be deleted!</string>
+    <string name="delete_alarm">删除闹钟</string>
+    <string name="delete_alarm_confirm">将会删除该闹钟！</string>
 
+    <string-array name="alarm_set">
+        <item msgid="5163476010406761625">"将在不到 1 分钟后响铃"</item>
+        <item msgid="7110525731259629055">"将在<xliff:g id="DAYS">%1$s</xliff:g>后响铃"</item>
+        <item msgid="7003982794086186185">"将在<xliff:g id="HOURS">%2$s</xliff:g>后响铃"</item>
+        <item msgid="7311021123230077742">"将在<xliff:g id="DAYS">%1$s</xliff:g> <xliff:g id="HOURS">%2$s</xliff:g>后响铃"</item>
+        <item msgid="8431715191823114872">"将在<xliff:g id="MINUTES">%3$s</xliff:g>后响铃"</item>
+        <item msgid="3244151088673185428">"将在<xliff:g id="DAYS">%1$s</xliff:g> <xliff:g id="MINUTES">%3$s</xliff:g>后响铃"</item>
+        <item msgid="3663661342600168814">"将在<xliff:g id="HOURS">%2$s</xliff:g> <xliff:g id="MINUTES">%3$s</xliff:g>后响铃"</item>
+        <item msgid="7779544127785487304">"将在<xliff:g id="DAYS">%1$s</xliff:g> <xliff:g id="HOURS">%2$s</xliff:g> <xliff:g id="MINUTES">%3$s</xliff:g>后响铃"</item>
+    </string-array>
+    <string name="day">"1 天"</string>
+    <string name="days">"<xliff:g id="DAYS">%s</xliff:g> 天"</string>
+    <string name="hour">"1 小时"</string>
+    <string name="hours" msgid="2071487018566991613">"<xliff:g id="HOURS">%s</xliff:g> 小时"</string>
+    <string name="minute">"1 分钟"</string>
+    <string name="minutes">"<xliff:g id="MINUTES">%s</xliff:g> 分钟"</string>
 
 </resources>
