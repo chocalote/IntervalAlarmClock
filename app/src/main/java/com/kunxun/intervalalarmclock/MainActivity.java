@@ -67,7 +67,7 @@ public class MainActivity extends Activity {
         btnSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, SettingActivity.class));
+                startActivity(new Intent(MainActivity.this, AlertActivity.class));
             }
         });
     }

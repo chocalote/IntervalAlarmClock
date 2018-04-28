@@ -82,4 +82,7 @@
         <item>暂停</item>
         <item>关闭</item>
     </string-array>
+
+    <string name="btn_snooze">"点击小睡<xliff:g id="MINUTES">%s</xliff:g>分钟"</string>
+    <string name="slide_to_unlock_string">滑动关闭闹钟</string>
 </resources>

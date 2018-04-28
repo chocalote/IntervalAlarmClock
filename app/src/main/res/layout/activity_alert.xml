@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:prvandroid="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    tools:context=".AlertActivity">
+
+    <TextView
+        android:id="@+id/textViewTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:paddingBottom="20dp"
+        android:paddingTop="60dp"
+        android:text="19:30"
+        android:textSize="60dp"/>
+
+    <TextView
+        android:id="@+id/textViewName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewTime"
+        android:layout_centerHorizontal="true"
+        android:text="闹钟"
+        android:textSize="18dp"/>
+
+    <Button
+        android:id="@+id/btnSnooze"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/slideBar"
+        android:layout_below="@id/textViewName"
+        android:background="#00000000"
+        android:text="@string/btn_snooze"
+        android:textSize="18dp"
+        />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_above="@id/slideBar"
+        android:layout_below="@id/btnSnooze"
+        android:background="@color/colorView"
+        android:paddingTop="10dp"
+        />
+
+    <com.kunxun.intervalalarmclock.SlideBar
+        android:id="@+id/slideBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/slide_bar_height"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp">
+        <!--prvandroid:LeftAnimationDuratioin="200"-->
+        <!--prvandroid:MinDistanceToUnlock="500"-->
+        <!--prvandroid:MinVelocityXToUnlock="1500"-->
+        <!--prvandroid:RightAnimationDuratioin="1000">-->
+
+        <com.kunxun.intervalalarmclock.GradientView
+            android:id="@+id/gradientView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/gradient_view_margin_left"
+            prvandroid:StringToShow="@string/slide_to_unlock_string"
+            prvandroid:TextSize="@dimen/gradient_text_size"/>
+    </com.kunxun.intervalalarmclock.SlideBar>
+
+</RelativeLayout>
