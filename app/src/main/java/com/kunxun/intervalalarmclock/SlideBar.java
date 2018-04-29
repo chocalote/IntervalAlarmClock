@@ -1,6 +1,7 @@
 package com.kunxun.intervalalarmclock;
 
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
@@ -9,7 +10,7 @@ import android.view.VelocityTracker;
 import android.widget.RelativeLayout;
 
 public class SlideBar extends RelativeLayout {
-    private static final String TAG = "SlideBar";
+//    private static final String TAG = "SlideBar";
 //    private static final boolean DEBUG = false;
 
     GradientView mGradientView ;
@@ -22,9 +23,9 @@ public class SlideBar extends RelativeLayout {
     private int mMinDistanceToUnlock;
     private int mLeftAnimationDuration;
     private int mRightAnimationDuration;
-    private ObjectAnimator animLeftMoveAnimator;
-    private ObjectAnimator animRightMoveAnimator;
-    private static final int MaxDistance = 400;
+//    private ObjectAnimator animLeftMoveAnimator;
+//    private ObjectAnimator animRightMoveAnimator;
+    private static final int MaxDistance = 800;
 
     public interface OnTriggerListener {
         void onTrigger();
@@ -42,6 +43,7 @@ public class SlideBar extends RelativeLayout {
         a.recycle();
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event){
         final int action = event.getActionMasked();
@@ -70,7 +72,7 @@ public class SlideBar extends RelativeLayout {
             case MotionEvent.ACTION_POINTER_UP:
             case MotionEvent.ACTION_UP:
 //                if (DEBUG) Log.v(TAG, "*** UP ***");
-                handleUp(event);
+                handleUp();
                 handled = true;
                 break;
 
@@ -81,10 +83,10 @@ public class SlideBar extends RelativeLayout {
 
         }
         invalidate();
-        return handled ? true : super.onTouchEvent(event);
+        return handled || super.onTouchEvent(event);
     }
 
-    private void handleUp(MotionEvent event) {
+    private void handleUp() {
 
 //        Log.v(TAG, "handleUp,mIndicateLeft:" + mGradientViewIndicateLeft);
         //1. if user slide some distance, unlock
@@ -120,7 +122,7 @@ public class SlideBar extends RelativeLayout {
 
     private void unlockSuccess() {
         mOnTriggerListener.onTrigger();
-        animRightMoveAnimator = ObjectAnimator.ofFloat(mGradientView, "x",mGradientView.getX(), MaxDistance)
+        ObjectAnimator animRightMoveAnimator = ObjectAnimator.ofFloat(mGradientView, "x",mGradientView.getX(), MaxDistance)
                 .setDuration(mRightAnimationDuration);
         animRightMoveAnimator.start();
     }
@@ -148,10 +150,10 @@ public class SlideBar extends RelativeLayout {
         return false;
     }
 
-    private void resetControls(){
+    private void resetControls() {
         mGradientView.startAnimator();
-        animLeftMoveAnimator = ObjectAnimator.ofFloat(mGradientView, "x",
-                mGradientView.getX(),gradientViewStartX).setDuration(mLeftAnimationDuration);
+        ObjectAnimator animLeftMoveAnimator = ObjectAnimator.ofFloat(mGradientView, "x",
+                mGradientView.getX(), gradientViewStartX).setDuration(mLeftAnimationDuration);
         animLeftMoveAnimator.start();
     }
 

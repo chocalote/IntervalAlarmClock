@@ -32,6 +32,7 @@
         </activity>
         <activity android:name=".AlertActivity">
         </activity>
+
     </application>
 
 </manifest>

@@ -330,11 +330,11 @@ public final class Alarm implements Parcelable {
         time = cursor.getLong(Columns.ALARM_TIME_INDEX);
     }
 
-//    public String getMessageOrDefault(Context context) {
-//        if (name == null || name.length() == 0) {
-//            return context.getString(R.string.default_label);
-//        }
-//        return name;
-//    }
+    public String getNameOrDefault(Context context) {
+        if (name == null || name.length() == 0) {
+            return context.getString(R.string.default_label);
+        }
+        return name;
+    }
 
 }

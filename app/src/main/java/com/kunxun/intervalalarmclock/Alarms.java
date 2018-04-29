@@ -23,8 +23,40 @@ public class Alarms {
     // from the alarm manager.
     public static final String ALARM_ALERT_ACTION = "com.kunxun.intervalalarmclock.ALARM_ALERT";
 
+    // A public action sent by AlarmKlaxon when the alarm has stopped sounding
+    // for any reason (e.g. because it has been dismissed from AlarmAlertFullScreen,
+    // or killed due to an incoming phone call, etc).
+    public static final String ALARM_DONE_ACTION = "com.kunxun.intervalalarmclock.ALARM_DONE";
+
+    // AlarmAlertFullScreen listen for this broadcast intent, so that other applications
+    // can snooze the alarm (after ALARM_ALERT_ACTION and before ALARM_DONE_ACTION).
+    public static final String ALARM_SNOOZE_ACTION = "com.kunxun.intervalalarmclock.ALARM_SNOOZE";
+
+    // AlarmAlertFullScreen listen for this broadcast intent, so that other applications
+    // can dismiss the alarm (after ALARM_ALERT_ACTION and before ALARM_DONE_ACTION).
+    public static final String ALARM_DISMISS_ACTION ="com.kunxun.intervalalarmclock.ALARM_DISMISS";
+
+    // This is a private action used by the AlarmKlaxon to update the UI to
+    // show the alarm has been killed.
+    public static final String ALARM_KILLED = "alarm_killed";
+
+    // Extra in the ALARM_KILLED intent to indicate to the user how long the
+    // alarm played before been killed
+    public static final String ALARM_KILLED_TIMEOUT="alarm_killed_timeout";
+
     // This string is used to indicate a silent alarm in the db.
     public static final String ALARM_ALERT_SILENT = "silent";
+
+    // This intent is sent from notification when the user cancels the snooze alert.
+    public static final String CANCEL_SNOOZE ="cancel_snooze";
+
+    // This string is used when passing an Alarm object through an intent
+    public static final String ALARM_INTENT_EXTRA = "intent.extra.alarm";
+
+    // This extra is the raw Alarm object data. It is used in the
+    // AlarmManagerService to avoid a ClassNotFoundException when filling in
+    // the Intent extras.
+    public static final String ALARM_RAW_DATA = "intent.extra.alarm_raw";
 
     // This string is used to identify the alarm id passed to AddEditActivity from the
     // list of alarms.
@@ -33,10 +65,7 @@ public class Alarms {
     final static String PREF_SNOOZE_TIME = "snooze_time";
     final static String PREF_SNOOZE_ID = "snooze_id";
 
-    // This extra is the raw Alarm object data. It is used in the
-    // AlarmManagerService to avoid a ClassNotFoundException when filling in
-    // the Intent extras.
-    public static final String ALARM_RAW_DATA = "intent.extra.alarm_raw";
+
 
     /**
      * Queries all alarms
@@ -285,6 +314,21 @@ public class Alarms {
         ed.apply();
     }
 
+    public static void saveSnoozeAlert(final Context context, final int id,final long time) {
+        SharedPreferences prefs = context.getSharedPreferences(
+                MainActivity.PREFERENCES, 0);
+        if (id == -1) {
+            clearSnoozePreference(context, prefs);
+        } else {
+            SharedPreferences.Editor ed = prefs.edit();
+            ed.putInt(PREF_SNOOZE_ID, id);
+            ed.putLong(PREF_SNOOZE_TIME, time);
+            ed.apply();
+        }
+        // Set the next alert after updating the snooze.
+        setNextAlert(context);
+    }
+
     /**
      * If there is a snooze set, enable it in AlarmManager
      *
@@ -309,7 +353,7 @@ public class Alarms {
     /**
      * Disable the snooze alert if the given id matches the snooze id.
      */
-    private static void disableSnoozeAlert(final Context context, final int id) {
+    public static void disableSnoozeAlert(final Context context, final int id) {
         SharedPreferences prefs = context.getSharedPreferences(MainActivity.PREFERENCES, 0);
         int snoozeId = prefs.getInt(PREF_SNOOZE_ID, -1);
         if (snoozeId == id) {
@@ -323,7 +367,7 @@ public class Alarms {
      * the user changes alarm settings.  Activates snooze if set,
      * otherwise loads all alarms, activates next alert.
      */
-    private static void setNextAlert(final Context context) {
+    public static void setNextAlert(final Context context) {
 
         if (!enableSnoozeAlert(context)) {
             Alarm alarm = calculateNextAlert(context);

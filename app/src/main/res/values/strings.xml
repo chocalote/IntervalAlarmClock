@@ -85,4 +85,7 @@
 
     <string name="btn_snooze">"点击小睡<xliff:g id="MINUTES">%s</xliff:g>分钟"</string>
     <string name="slide_to_unlock_string">滑动关闭闹钟</string>
+
+    <string name="alarm_notify_text">"选择暂停或关闭此闹钟。"</string>
+    <string name="alarm_alert_silenced">"闹钟响铃时间为 <xliff:g id="MINUTES">%d</xliff:g> 分钟"</string>
 </resources>
