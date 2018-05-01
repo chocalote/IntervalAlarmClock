@@ -21,6 +21,8 @@ public class SettingActivity extends Activity {
             1 << AudioManager.STREAM_ALARM;
     private static final String KEY_ALARM_IN_SILENT_MODE =
             "alarm_in_silent_mode";
+    static final String KEY_VOLUME_BEHAVIOR =
+            "volume_button_setting";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
