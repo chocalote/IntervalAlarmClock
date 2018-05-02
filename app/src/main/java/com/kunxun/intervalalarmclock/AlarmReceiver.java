@@ -75,14 +75,14 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
 
         // Maintain a CPU wake lock until the AlarmAlert and AlarmKlaxon can pick it up
-        AlarmAlertWakeLock.acquireCpuWakeLock(context);
+        AlertWakeLock.acquireCpuWakeLock(context);
 
         // Close dialogs and window shad
         Intent closeDialogs = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         context.sendBroadcast(closeDialogs);
 
         // Decide which activity to start based on the state of the keyguard
-        Class c = AlarmAlert.class;
+        Class c = AlertDialog.class;
         KeyguardManager km = (KeyguardManager) context.getSystemService(
                 Context.KEYGUARD_SERVICE);
         assert km != null;
@@ -98,7 +98,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         // Trigger a notification that, when clicked, will show the alarm alert dialog.
         // No need to check for fullscreen since this will always be launched from a user action.
-        Intent notify = new Intent(context, AlarmAlert.class);
+        Intent notify = new Intent(context, AlertDialog.class);
         notify.putExtra(Alarms.ALARM_INTENT_EXTRA, alarm);
         PendingIntent pendingNotify = PendingIntent.getActivity(context, alarm.id, notify, 0);
 

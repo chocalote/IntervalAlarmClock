@@ -23,6 +23,8 @@ public class SettingActivity extends Activity {
             "alarm_in_silent_mode";
     static final String KEY_VOLUME_BEHAVIOR =
             "volume_button_setting";
+    static final String KEY_ALARM_SNOOZE =
+            "snooze_duration";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

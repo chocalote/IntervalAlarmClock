@@ -32,6 +32,8 @@
         </activity>
         <activity android:name=".AlertActivity">
         </activity>
+        <activity android:name=".AlertDialog">
+        </activity>
 
     </application>
 
