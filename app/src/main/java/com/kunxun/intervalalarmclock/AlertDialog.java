@@ -1,5 +1,6 @@
 package com.kunxun.intervalalarmclock;
 
+import android.annotation.SuppressLint;
 import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -18,8 +19,8 @@ public class AlertDialog extends AlertActivity {
 
     // If we try to check the keyguard more than 5 times, just launch the full screen activity.
     private int mKeyguardRetryCount;
-    private final int MAX_KEYGUARD_CHECKS = 5;
 
+    @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -32,6 +33,7 @@ public class AlertDialog extends AlertActivity {
         public void onReceive(Context context, Intent intent) {
             KeyguardManager keyguardManager =
                     (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+            assert keyguardManager != null;
             handleScreenOff(keyguardManager);
         }
     };
@@ -73,9 +75,7 @@ public class AlertDialog extends AlertActivity {
     }
 
     private boolean checkRetryCount() {
-        if (mKeyguardRetryCount++ >= MAX_KEYGUARD_CHECKS) {
-            return false;
-        }
-        return true;
+        int MAX_KEYGUARD_CHECKS = 5;
+        return mKeyguardRetryCount++ < MAX_KEYGUARD_CHECKS;
     }
 }

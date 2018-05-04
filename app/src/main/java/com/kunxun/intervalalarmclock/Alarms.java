@@ -78,7 +78,7 @@ public class Alarms {
     }
 
     // Private method to get a more limited set of enabled alarms from the database.
-    private static Cursor getFilterdAlarmCursor(ContentResolver contentResolver) {
+    private static Cursor getFilteredAlarmsCursor(ContentResolver contentResolver) {
         return contentResolver.query(Alarm.Columns.CONTENT_URI, Alarm.Columns.ALARM_QUERY_COLUMNS,
                 Alarm.Columns.WHERE_ENABLED, null, null);
     }
@@ -240,7 +240,7 @@ public class Alarms {
         Alarm alarm = null;
         long minTime = Long.MAX_VALUE;
         long now = System.currentTimeMillis();
-        Cursor cursor = getFilterdAlarmCursor(context.getContentResolver());
+        Cursor cursor = getFilteredAlarmsCursor(context.getContentResolver());
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
@@ -361,6 +361,27 @@ public class Alarms {
         }
     }
 
+    /**
+     * Disables non-repeating alarms that have passed.  Called at
+     * boot.
+     */
+    public static void disableExpiredAlarms(final Context context) {
+        Cursor cur = getFilteredAlarmsCursor(context.getContentResolver());
+        long now = System.currentTimeMillis();
+
+        if (cur.moveToFirst()) {
+            do {
+                Alarm alarm = new Alarm(cur);
+                // A time of 0 means this alarm repeats. If the time is
+                // non-zero, check if the time is before now.
+                if (alarm.time != 0 && alarm.time < now) {
+                    enableAlarmInternal(context, alarm, false);
+                }
+            } while (cur.moveToNext());
+        }
+        cur.close();
+    }
+
 
     /**
      * Called at system startup, on time/timezone change, and whenever
@@ -424,6 +445,7 @@ public class Alarms {
         PendingIntent sender = PendingIntent.getBroadcast(context, 0,
                 new Intent(ALARM_ALERT_ACTION),PendingIntent.FLAG_CANCEL_CURRENT);
 
+        assert am != null;
         am.cancel(sender);
         setStatusBarIcon(context,false);
 //        saveNextAlarm(context, "");
