@@ -80,23 +80,23 @@ public final class Alarm implements Parcelable {
         public static final String TIME = "time";
         public static final String DEFAULT_SORT_ORDER = START_HOUR + ", " + START_MINUTES + " ASC";
         public static final String WHERE_ENABLED = ENABLED + " = 1";
-        public static final String WHERE_INTERVAL_ENABLED = INTERVAL_ENABLED + " = 1";
-        static final String[] ALARM_QUERY_COLUMNS = {_ID, START_HOUR, START_MINUTES, END_HOUR, END_MINUTES,
+//        public static final String WHERE_INTERVAL_ENABLED = INTERVAL_ENABLED + " = 1";
+        public static final String[] ALARM_QUERY_COLUMNS = {_ID, START_HOUR, START_MINUTES, END_HOUR, END_MINUTES,
                 DAYS_OF_WEEK, INTERVAL, INTERVAL_ENABLED, ENABLED, VIBRATE, NAME, ALERT, TIME};
 
-        public static final int ALARM_ID_INDEX = 0;
-        public static final int ALARM_START_HOUR_INDEX = 1;
-        public static final int ALARM_START_MINUTES_INDEX = 2;
-        public static final int ALARM_END_HOUR_INDEX = 3;
-        public static final int ALARM_END_MINUTES_INDEX = 4;
-        public static final int ALARM_DAYS_OF_WEEK_INDEX = 5;
-        public static final int ALARM_INTERVAL_INDEX = 6;
-        public static final int ALARM_INTERVAL_ENABLED_INDEX = 7;
-        public static final int ALARM_ENABLED_INDEX = 8;
-        public static final int ALARM_VIBRATE_INDEX = 9;
-        public static final int ALARM_NAME_INDEX = 10;
-        public static final int ALARM_ALERT_INDEX = 11;
-        public static final int ALARM_TIME_INDEX = 12;
+        private static final int ALARM_ID_INDEX = 0;
+        private static final int ALARM_START_HOUR_INDEX = 1;
+        private static final int ALARM_START_MINUTES_INDEX = 2;
+        private static final int ALARM_END_HOUR_INDEX = 3;
+        private static final int ALARM_END_MINUTES_INDEX = 4;
+        private static final int ALARM_DAYS_OF_WEEK_INDEX = 5;
+        private static final int ALARM_INTERVAL_INDEX = 6;
+        private static final int ALARM_INTERVAL_ENABLED_INDEX = 7;
+        private static final int ALARM_ENABLED_INDEX = 8;
+        private static final int ALARM_VIBRATE_INDEX = 9;
+        private static final int ALARM_NAME_INDEX = 10;
+        private static final int ALARM_ALERT_INDEX = 11;
+        private static final int ALARM_TIME_INDEX = 12;
     }
 
     /*
@@ -300,6 +300,7 @@ public final class Alarm implements Parcelable {
         vibrate = true;
         daysOfWeek = new DaysOfWeek(0);
         alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        name = "闹钟";
     }
 
     public Alarm(Cursor cursor) {

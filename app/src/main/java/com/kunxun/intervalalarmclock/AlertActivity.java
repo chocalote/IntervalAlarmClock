@@ -65,6 +65,9 @@ public class AlertActivity extends Activity implements SlideBar.OnTriggerListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         setContentView(R.layout.activity_alert);
 
         mAlarm = getIntent().getParcelableExtra(Alarms.ALARM_INTENT_EXTRA);
@@ -76,7 +79,7 @@ public class AlertActivity extends Activity implements SlideBar.OnTriggerListene
                 getString(SettingActivity.KEY_VOLUME_BEHAVIOR, DEFAULT_VOLUME_BEHAVIOR);
         mVolumeBehavior = Integer.parseInt(vol);
 
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         final Window win = getWindow();
         win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
 
@@ -98,6 +101,12 @@ public class AlertActivity extends Activity implements SlideBar.OnTriggerListene
 
     private void updateLayout() {
         Button btnSnooze = findViewById(R.id.btnSnooze);
+        String snoozeTime = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(SettingActivity.KEY_ALARM_SNOOZE, DEFAULT_SNOOZE_TIME);
+
+        snoozeTime = getString(R.string.btn_snooze, snoozeTime);
+        btnSnooze.setText(snoozeTime);
+
         btnSnooze.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -172,7 +181,9 @@ public class AlertActivity extends Activity implements SlideBar.OnTriggerListene
         // Display the snooze minutes in a toast
         Toast.makeText(this, displayTime, Toast.LENGTH_LONG).show();
 
-        stopService(new Intent(Alarms.ALARM_ALERT_ACTION));
+        Intent stopSer = new Intent(Alarms.ALARM_ALERT_ACTION);
+        stopSer.setPackage("com.kunxun.intervalalarmclock");
+        stopService(stopSer);
         finish();
     }
 
@@ -182,7 +193,9 @@ public class AlertActivity extends Activity implements SlideBar.OnTriggerListene
             // Cancel the notification and stop playing the alarm
             NotificationManager manager = getNotificationManager();
             manager.cancel(mAlarm.id);
-            stopService(new Intent(Alarms.ALARM_ALERT_ACTION));
+            Intent stopSer = new Intent(Alarms.ALARM_ALERT_ACTION);
+            stopSer.setPackage("com.kunxun.intervalalarmclock");
+            stopService(stopSer);
         }
         finish();
     }

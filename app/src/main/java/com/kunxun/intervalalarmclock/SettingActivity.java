@@ -26,6 +26,8 @@ public class SettingActivity extends Activity {
     static final String KEY_ALARM_SNOOZE =
             "snooze_duration";
 
+    static final String KEY_ALERT_TIMEOUT = "alert_duration";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +36,8 @@ public class SettingActivity extends Activity {
         getFragmentManager().beginTransaction()
                 .replace(R.id.prefs_setting, new PrefsSettingFragment()).commit();
     }
+
+
 
     public static class PrefsSettingFragment extends PreferenceFragment {
 
@@ -62,14 +66,14 @@ public class SettingActivity extends Activity {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     alertDurationPref.setSummary("响铃" + newValue.toString() + "分钟后自动停止");
-                    return false;
+                    return true;
                 }
             });
             snoozeDurationPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     snoozeDurationPref.setSummary("间隔" + newValue.toString() + "分钟响铃");
-                    return false;
+                    return true;
                 }
             });
 
@@ -77,9 +81,17 @@ public class SettingActivity extends Activity {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     volumeButtonPref.setSummary(getResources().getString(R.string.volume_button_summary) + ": " + newValue.toString());
-                    return false;
+                    return true;
                 }
             });
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            snoozeDurationPref.setSummary("间隔" + snoozeDurationPref.getValue() + "分钟响铃");
+            alertDurationPref.setSummary("响铃" + alertDurationPref.getValue() + "分钟后自动停止");
+            volumeButtonPref.setSummary(getResources().getString(R.string.volume_button_summary) + ": " + volumeButtonPref.getValue());
         }
 
         @Override
@@ -94,17 +106,17 @@ public class SettingActivity extends Activity {
                     ringerModeStreamTypes |= ALARM_STREAM_TYPE_BIT;
                 }
 
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                    if (!Settings.System.canWrite(getContext())) {
-//                        Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
-//                        intent.setData(Uri.parse("package:" + getContext().getPackageName()));
-//                        getContext().startActivity(intent);
-//                    } else {
-//
-//                        Settings.System.putInt(getActivity().getContentResolver(),
-//                                Settings.System.MODE_RINGER_STREAMS_AFFECTED, ringerModeStreamTypes);
-//                    }
-//                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (!Settings.System.canWrite(getContext())) {
+                        Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+                        intent.setData(Uri.parse("package:" + getContext().getPackageName()));
+                        getContext().startActivity(intent);
+                    } else {
+
+                        Settings.System.putInt(getActivity().getContentResolver(),
+                                Settings.System.MODE_RINGER_STREAMS_AFFECTED, ringerModeStreamTypes);
+                    }
+                }
             }
 
             return super.onPreferenceTreeClick(preferenceScreen, preference);

@@ -152,7 +152,7 @@ public class AlarmProvider extends ContentProvider {
                         "Cannot update URL: " + url);
             }
         }
-        Log.v("Kunxun", "*** notifyChange() rowId: " + rowId + " url " + url);
+        Log.v("Kunxun", "*** update() alarmId: " + rowId + " url " + url);
         Objects.requireNonNull(getContext()).getContentResolver().notifyChange(url, null);
         return count;
     }

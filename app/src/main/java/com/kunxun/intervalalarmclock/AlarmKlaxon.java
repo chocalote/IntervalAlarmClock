@@ -14,9 +14,11 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import java.io.IOException;
 
@@ -30,7 +32,7 @@ public class AlarmKlaxon extends Service {
      * Play alarm up to 10 minutes before silencing
      */
     // Get value from SettingActivity
-    private static final int ALARM_TIMEOUT_SECONDS = 10 * 60;
+    private static final String ALARM_TIMEOUT = "10";
 
     private static final long[] sVibratePattern = new long[]{500, 500};
 
@@ -40,7 +42,7 @@ public class AlarmKlaxon extends Service {
     private Alarm mCurrentAlarm;
     private long mStartTime;
     private TelephonyManager mTelephonyManager;
-    private int mInititalCallstate;
+    private int mInitialCallState;
     private AudioManager mAudioManager = null;
     private boolean mCurrentState = true;
 
@@ -49,7 +51,7 @@ public class AlarmKlaxon extends Service {
 
     // Internal message
     private static final int KILLER = 1;
-    private static final int FOCUSCHANGE = 2;
+    private static final int FOCUS_CHANGE = 2;
 
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
@@ -60,7 +62,7 @@ public class AlarmKlaxon extends Service {
                     sendKillBroadcast((Alarm) msg.obj);
                     stopSelf();
                     break;
-                case FOCUSCHANGE:
+                case FOCUS_CHANGE:
                     switch (msg.arg1) {
                         case AudioManager.AUDIOFOCUS_LOSS:
                             if (!mPlaying && mMediaPlayer != null) {
@@ -95,7 +97,7 @@ public class AlarmKlaxon extends Service {
             // The user might already be in a call when the alarm fires. When we register
             // onCallStateChanged, we get the initial in-call state which kills the alarm.
             // Check against the initial call state so we don't kill the alarm during the call.
-            if (state != TelephonyManager.CALL_STATE_IDLE && state != mInititalCallstate) {
+            if (state != TelephonyManager.CALL_STATE_IDLE && state != mInitialCallState) {
                 sendKillBroadcast(mCurrentAlarm);
                 stopSelf();
             }
@@ -106,7 +108,7 @@ public class AlarmKlaxon extends Service {
             new AudioManager.OnAudioFocusChangeListener() {
                 @Override
                 public void onAudioFocusChange(int focusChange) {
-                    mHandler.obtainMessage(FOCUSCHANGE, focusChange, 0).sendToTarget();
+                    mHandler.obtainMessage(FOCUS_CHANGE, focusChange, 0).sendToTarget();
                 }
             };
 
@@ -160,7 +162,7 @@ public class AlarmKlaxon extends Service {
         mCurrentAlarm = alarm;
 
         // Record the initial call state here so that the new alarm has the newest state.
-        mInititalCallstate = mTelephonyManager.getCallState();
+        mInitialCallState = mTelephonyManager.getCallState();
         return START_STICKY;
     }
 
@@ -204,8 +206,7 @@ public class AlarmKlaxon extends Service {
                     mMediaPlayer.setVolume(IN_CALL_VOLUME, IN_CALL_VOLUME);
                     setDataSourceFromResource(getResources(), mMediaPlayer,
                             R.raw.in_call_alarm);
-                }
-                else {
+                } else {
                     mMediaPlayer.setDataSource(this, alert);
                 }
                 startAlarm(mMediaPlayer);
@@ -216,17 +217,16 @@ public class AlarmKlaxon extends Service {
                     mMediaPlayer.reset();
                     setDataSourceFromResource(getResources(), mMediaPlayer, R.raw.fallbackring);
                     startAlarm(mMediaPlayer);
-                }catch (Exception ex2){
-
+                } catch (Exception ex2) {
+                    Log.v("kunxun","Failed to play fallback ringtong " + ex2);
                 }
             }
         }
 
         // Start the vibrate after everything is ok with the media player
-        if (alarm.vibrate){
-            mVibrator.vibrate(sVibratePattern,0);
-        }
-        else {
+        if (alarm.vibrate) {
+            mVibrator.vibrate(sVibratePattern, 0);
+        } else {
             mVibrator.cancel();
         }
 
@@ -240,14 +240,14 @@ public class AlarmKlaxon extends Service {
      * repeating
      */
     public void stop() {
-        if (mPlaying){
+        if (mPlaying) {
             mPlaying = false;
 
             Intent alarmDone = new Intent(Alarms.ALARM_DONE_ACTION);
             sendBroadcast(alarmDone);
 
             // Stop audio playing
-            if(mMediaPlayer !=null){
+            if (mMediaPlayer != null) {
                 mMediaPlayer.stop();
                 mMediaPlayer.release();
                 mMediaPlayer = null;
@@ -261,10 +261,11 @@ public class AlarmKlaxon extends Service {
 
     // Do the common stuff when starting the alarm
     private void startAlarm(MediaPlayer player)
-            throws IOException, IllegalArgumentException, IllegalStateException{
-        final  AudioManager audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+            throws IOException, IllegalArgumentException, IllegalStateException {
+        final AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         // Do not play alarms if stream volume is 0 (typically because ringer mode is silent).
-        if(audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM) != 0){
+        assert audioManager != null;
+        if (audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM) != 0) {
             player.setAudioStreamType(AudioManager.STREAM_ALARM);
             player.setLooping(true);
             player.prepare();
@@ -284,16 +285,18 @@ public class AlarmKlaxon extends Service {
     /**
      * Kills alarm audio after ALARM_TIMEOUT_SECONDS, so the alarm
      * won't run all day.
-     *
+     * <p>
      * This just cancels the audio, but leaves the notification
      * popped, so the user will know that the alarm tripped.
      */
 
     private void enableKiller(Alarm alarm) {
-        mHandler.sendMessageDelayed(mHandler.obtainMessage(KILLER, alarm), 1000 * ALARM_TIMEOUT_SECONDS);
+        String timeOut = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(SettingActivity.KEY_ALERT_TIMEOUT, ALARM_TIMEOUT);
+        mHandler.sendMessageDelayed(mHandler.obtainMessage(KILLER, alarm), 1000 * Integer.parseInt(timeOut) * 60);
     }
 
-    private void disabledKiller(){
+    private void disabledKiller() {
         mHandler.removeMessages(KILLER);
     }
 

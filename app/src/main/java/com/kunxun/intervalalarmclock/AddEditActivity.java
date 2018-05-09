@@ -12,6 +12,7 @@ import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
+import android.preference.RingtonePreference;
 import android.preference.SwitchPreference;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -72,10 +73,11 @@ public class AddEditActivity extends Activity {
 
     public static class PrefsAlarmFragment extends PreferenceFragment {
 
-        public Preference startTimePref, endTimePref, alertPref;
+        public Preference startTimePref, endTimePref;
         public SwitchPreference intervalEnabledPref, vibratePref;
         public MultiSelectListPreference daysOfWeekPref;
         public EditTextPreference intervalPref, alarmNamePref;
+        public RingtonePreference alertPref;
         private Alarm mAlarm = new Alarm();
 
         @Override
@@ -91,7 +93,7 @@ public class AddEditActivity extends Activity {
             daysOfWeekPref.setEntryValues(Alarm.DaysOfWeek.DAY_SHORT_STRING_MAP);
 
             vibratePref = (SwitchPreference) findPreference("vibrate");
-            alertPref = findPreference("ringtone");
+            alertPref = (RingtonePreference) findPreference("ringtone");
             alarmNamePref = (EditTextPreference) findPreference("name");
 
             int mId = getActivity().getIntent().getIntExtra(Alarms.ALARM_ID, -1);
@@ -108,7 +110,20 @@ public class AddEditActivity extends Activity {
 
         @Override
         public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, final Preference preference) {
+
+
             if (preference == startTimePref || preference == endTimePref) {
+                int hourOfDay = 8, minute =0;
+                if (mAlarm.id !=-1){
+                    if (preference == startTimePref){
+                        hourOfDay = mAlarm.starthour;
+                        minute = mAlarm.startminutes;
+                    }
+                    else{
+                        hourOfDay = mAlarm.endhour;
+                        minute = mAlarm.endminutes;
+                    }
+                }
                 TimePickerDialog timeDialog = new TimePickerDialog(getActivity(),
                         new TimePickerDialog.OnTimeSetListener() {
                             @Override
@@ -123,7 +138,8 @@ public class AddEditActivity extends Activity {
                                 }
 
                             }
-                        }, 0, 0, true);
+                        }, hourOfDay, minute, true);
+
                 timeDialog.show();
             }
 
@@ -141,7 +157,7 @@ public class AddEditActivity extends Activity {
                     mAlarm.daysOfWeek.set(o.toString());
                     daysOfWeekPref.setValues(mAlarm.daysOfWeek.getSetSelected());
                     daysOfWeekPref.setSummary(mAlarm.daysOfWeek.toString(getActivity().getApplicationContext(), true));
-                    return false;
+                    return true;
                 }
             });
 
@@ -151,10 +167,27 @@ public class AddEditActivity extends Activity {
                     Uri uri = Uri.parse(o.toString());
                     alertPref.setSummary(RingtoneManager.getRingtone(getActivity(), uri).getTitle(getActivity()));
                     mAlarm.alert = uri;
-                    return false;
+                    return true;
                 }
             });
 
+            intervalPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    intervalPref.setSummary(newValue.toString() + " 分钟");
+                    mAlarm.interval = Integer.parseInt(newValue.toString());
+                    return true;
+                }
+            });
+
+            alarmNamePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    alarmNamePref.setSummary(newValue.toString());
+                    mAlarm.name = newValue.toString();
+                    return true;
+                }
+            });
         }
 
         private void updatePrefs() {
@@ -166,7 +199,8 @@ public class AddEditActivity extends Activity {
             endTimePref.setSummary(tmpStr);
 
             intervalEnabledPref.setChecked(mAlarm.intervalenabled);
-            intervalPref.setSummary(mAlarm.interval + " minutes");
+            intervalPref.setSummary(mAlarm.interval + " 分钟");
+            //intervalPref.setText(Integer.toString(mAlarm.interval));
             vibratePref.setChecked(mAlarm.vibrate);
             alertPref.setSummary(RingtoneManager.getRingtone(getActivity(), mAlarm.alert).getTitle(getActivity()));
             alarmNamePref.setSummary(mAlarm.name);
@@ -182,13 +216,13 @@ public class AddEditActivity extends Activity {
         alarm.starthour = prefsAlarmFragment.mAlarm.starthour;
         alarm.startminutes = prefsAlarmFragment.mAlarm.startminutes;
         alarm.intervalenabled = prefsAlarmFragment.intervalEnabledPref.isChecked();
-        alarm.interval = Integer.parseInt(prefsAlarmFragment.intervalPref.getText());
+        alarm.interval = prefsAlarmFragment.mAlarm.interval;
         alarm.endhour = prefsAlarmFragment.mAlarm.endhour;
         alarm.endminutes = prefsAlarmFragment.mAlarm.endminutes;
         alarm.daysOfWeek = prefsAlarmFragment.mAlarm.daysOfWeek;
         alarm.vibrate = prefsAlarmFragment.vibratePref.isChecked();
         alarm.alert = prefsAlarmFragment.mAlarm.alert;
-        alarm.name = prefsAlarmFragment.alarmNamePref.getText();
+        alarm.name = prefsAlarmFragment.mAlarm.name;
 
         if (alarm.id == -1) {
             Alarms.addAlarm(this, alarm);

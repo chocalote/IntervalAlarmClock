@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.os.Parcel;
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
+
 
 public class AlarmReceiver extends BroadcastReceiver {
 
@@ -40,9 +42,11 @@ public class AlarmReceiver extends BroadcastReceiver {
         final byte[] data = intent.getByteArrayExtra(Alarms.ALARM_RAW_DATA);
         if (data != null) {
             Parcel in = Parcel.obtain();
+//            in.readParcelable(Alarm.class.getClassLoader());
             in.unmarshall(data, 0, data.length);
             in.setDataPosition(0);
             alarm = Alarm.CREATOR.createFromParcel(in);
+            Log.v("kunxun", "AlarmID: "+ alarm.id +", Time: " + new SimpleDateFormat("yyyy-MM-dd HH:mm").format(alarm.time));
         }
 
         if (alarm == null) {
@@ -94,12 +98,14 @@ public class AlarmReceiver extends BroadcastReceiver {
         // Play the alarm alert and vibrate the device.
         Intent playAlarm = new Intent(Alarms.ALARM_ALERT_ACTION);
         playAlarm.putExtra(Alarms.ALARM_INTENT_EXTRA, alarm);
+        playAlarm.setPackage("com.kunxun.intervalalarmclock");
         context.startService(playAlarm);
 
         // Trigger a notification that, when clicked, will show the alarm alert dialog.
         // No need to check for fullscreen since this will always be launched from a user action.
         Intent notify = new Intent(context, AlertDialog.class);
         notify.putExtra(Alarms.ALARM_INTENT_EXTRA, alarm);
+        notify.setPackage("com.kunxun.intervalalarmclock");
         PendingIntent pendingNotify = PendingIntent.getActivity(context, alarm.id, notify, 0);
 
         // Use the alarm's label or the default label as the ticker text and main text of the notification.
@@ -121,6 +127,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         Intent alarmAlert = new Intent(context, c);
         alarmAlert.putExtra(Alarms.ALARM_INTENT_EXTRA, alarm);
         alarmAlert.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_USER_ACTION);
+        alarmAlert.setPackage("com.kunxun.intervalalarmclock");
         notification.fullScreenIntent = PendingIntent.getActivity(context, alarm.id, alarmAlert, 0);
 
         // Send the notification using the alarm id to easily identify the correct notification

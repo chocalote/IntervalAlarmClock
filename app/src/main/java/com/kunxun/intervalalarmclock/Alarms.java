@@ -14,6 +14,9 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.provider.Settings;
 import android.util.Log;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class Alarms {
@@ -88,10 +91,10 @@ public class Alarms {
 
         // Set the alarm_time value if this alarm does not repeat. This will be
         // used later to disable expire alarms.
-        long time = 0;
-        if (alarm.daysOfWeek.nonRepeatSet()) {
-            time = calculateAlarm(alarm);
-        }
+//        long time = 0;
+//        if (alarm.daysOfWeek.nonRepeatSet()) {
+//            time = calculateAlarm(alarm);
+//        }
 
         values.put(Alarm.Columns.START_HOUR, alarm.starthour);
         values.put(Alarm.Columns.START_MINUTES, alarm.startminutes);
@@ -104,7 +107,7 @@ public class Alarms {
         values.put(Alarm.Columns.VIBRATE, alarm.vibrate);
         values.put(Alarm.Columns.ALERT, (alarm.alert == null) ? ALARM_ALERT_SILENT : alarm.alert.toString());
         values.put(Alarm.Columns.NAME, alarm.name);
-        values.put(Alarm.Columns.TIME, time);
+        values.put(Alarm.Columns.TIME, alarm.time);
 
         return values;
     }
@@ -288,7 +291,7 @@ public class Alarms {
                 } else if (nowTime > alarmStartTime) {
                     int i = 1;
                     while (nowTime <= alarmEndTime) {
-                        if (nowTime <= (alarmStartTime + i * alarm.interval)) {
+                        if (nowTime < (alarmStartTime + i * alarm.interval)) {
                             c.add(Calendar.MINUTE, i * alarm.interval);
                             break;
                         }
@@ -409,7 +412,8 @@ public class Alarms {
      */
     private static void enableAlert(Context context, final Alarm alarm, final long atTimeInMillis) {
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Log.v("Kunxun", "** setAlert id " + alarm.id + " atTime " + atTimeInMillis);
+
+        Log.v("Kunxun", "** setAlert id " + alarm.id + " atTime " + new SimpleDateFormat("yyyy-MM-dd HH:mm").format(atTimeInMillis));
 
         Intent intent = new Intent(ALARM_ALERT_ACTION);
         // This is a slight hack to avoid an exception in the remote

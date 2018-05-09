@@ -41,7 +41,6 @@ public class AlertDialog extends AlertActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         // Listen for the screen turning off so that when the screen comes back on,
         // the user does not need to unlock the phone to dismiss the alarm.
         registerReceiver(mScreenReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
