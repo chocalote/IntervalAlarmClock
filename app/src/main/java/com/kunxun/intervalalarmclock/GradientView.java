@@ -53,7 +53,7 @@ public class GradientView extends View {
                 mIndex = Float.parseFloat(animation.getAnimatedValue().toString());
 
                 mShader = new LinearGradient(mIndex - 20 * mUpdateStep, 100,
-                        mIndex, 100, new int[] { mDefaultColor, mDefaultColor, mDefaultColor,mSlideColor,
+                        mIndex + 200, 100, new int[] { mDefaultColor, mDefaultColor, mDefaultColor,mSlideColor,
                         mSlideColor, mDefaultColor, mDefaultColor, mDefaultColor }, null,
                         Shader.TileMode.CLAMP);
                 postInvalidate();
@@ -100,7 +100,7 @@ public class GradientView extends View {
 //        Log.w(TAG, "stopGradient");
         animator.cancel();
         //reset
-        mShader = new LinearGradient(0, 100, mIndex, 100,
+        mShader = new LinearGradient(0, 100, mIndex + 200, 100,
                 new int[] {mSlideColor, mSlideColor},
                 null, Shader.TileMode.CLAMP);
         invalidate();

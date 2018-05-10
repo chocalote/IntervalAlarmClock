@@ -1,5 +1,6 @@
 package com.kunxun.intervalalarmclock;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -62,8 +63,8 @@ public class Alarms {
     // list of alarms.
     public static final String ALARM_ID = "alarm_id";
 
-    final static String PREF_SNOOZE_TIME = "snooze_time";
-    final static String PREF_SNOOZE_ID = "snooze_id";
+    private final static String PREF_SNOOZE_TIME = "snooze_time";
+    private static String PREF_SNOOZE_ID = "snooze_id";
 
 
 
@@ -410,6 +411,7 @@ public class Alarms {
      * @param alarm          Alarm.
      * @param atTimeInMillis milliseconds since epoch
      */
+    @SuppressLint("SimpleDateFormat")
     private static void enableAlert(Context context, final Alarm alarm, final long atTimeInMillis) {
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 

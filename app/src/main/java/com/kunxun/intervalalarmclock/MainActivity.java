@@ -3,7 +3,6 @@ package com.kunxun.intervalalarmclock;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -23,14 +22,14 @@ public class MainActivity extends Activity {
     static final String PREFERENCES = "IntervalAlarmClock";
     private LayoutInflater mFactory;
     private Cursor mCursor;
-    private SharedPreferences mPrefs;
+//    private SharedPreferences mPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mPrefs = getSharedPreferences(PREFERENCES, 0);
+//        mPrefs = getSharedPreferences(PREFERENCES, 0);
 
         mFactory = LayoutInflater.from(this);
         mCursor = Alarms.getAlarmCursor(getContentResolver());
@@ -40,7 +39,7 @@ public class MainActivity extends Activity {
     private void updateLayout() {
         ListView mListView = findViewById(R.id.mListView);
 
-        AlarmAdapter adapter = new AlarmAdapter(this, mCursor);
+        AlarmAdapter adapter = new AlarmAdapter(this, mCursor,false);
         mListView.setAdapter(adapter);
 
         //Set the alarm
@@ -73,8 +72,8 @@ public class MainActivity extends Activity {
 
     private class AlarmAdapter extends CursorAdapter {
 
-        private AlarmAdapter(Context context, Cursor cursor) {
-            super(context, cursor);
+        private AlarmAdapter(Context context, Cursor c, boolean autoRequery) {
+            super(context, c, autoRequery);
         }
 
         @Override

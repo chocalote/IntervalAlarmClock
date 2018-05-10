@@ -1,5 +1,6 @@
 package com.kunxun.intervalalarmclock;
 
+import android.annotation.SuppressLint;
 import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -19,6 +20,7 @@ public class AlarmReceiver extends BroadcastReceiver {
      is probably the result of a time or timezone change */
     private final static int STALE_WINDOW = 30*60*1000;
 
+    @SuppressLint("SimpleDateFormat")
     @Override
     public void onReceive(Context context, Intent intent) {
         if (Alarms.ALARM_KILLED.equals(intent.getAction())) {
