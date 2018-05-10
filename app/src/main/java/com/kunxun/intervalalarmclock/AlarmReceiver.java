@@ -46,11 +46,11 @@ public class AlarmReceiver extends BroadcastReceiver {
             in.unmarshall(data, 0, data.length);
             in.setDataPosition(0);
             alarm = Alarm.CREATOR.createFromParcel(in);
-            Log.v("kunxun", "AlarmID: "+ alarm.id +", Time: " + new SimpleDateFormat("yyyy-MM-dd HH:mm").format(alarm.time));
+            Log.v("Lily", "AlarmID: "+ alarm.id +", Time: " + new SimpleDateFormat("yyyy-MM-dd HH:mm").format(alarm.time));
         }
 
         if (alarm == null) {
-            Log.v("kunxun", "Failed to parse the alarm from the intent");
+            Log.v("Lily", "Failed to parse the alarm from the intent");
 
             // Make sure we set the next alert if needed.
             Alarms.setNextAlert(context);
@@ -74,7 +74,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         // Always verbose to tack down time change problems
         if (now > alarm.time + STALE_WINDOW) {
-            Log.v("kunxun", "Ignoring stale alarm");
+            Log.v("Lily", "Ignoring stale alarm");
             return;
         }
 

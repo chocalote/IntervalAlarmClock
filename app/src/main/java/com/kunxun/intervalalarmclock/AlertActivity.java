@@ -133,7 +133,6 @@ public class AlertActivity extends Activity implements SlideBar.OnTriggerListene
     @Override
     public void onTrigger() {
         dismiss(false);
-
     }
 
     private void snooze() {
@@ -197,6 +196,7 @@ public class AlertActivity extends Activity implements SlideBar.OnTriggerListene
             stopSer.setPackage("com.kunxun.intervalalarmclock");
             stopService(stopSer);
         }
+        Alarms.setNextAlert(getApplicationContext());
         finish();
     }
 

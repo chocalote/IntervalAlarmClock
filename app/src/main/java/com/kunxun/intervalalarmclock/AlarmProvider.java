@@ -59,7 +59,7 @@ public class AlarmProvider extends ContentProvider {
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-            Log.v("kunxun",
+            Log.v("Lily",
                     "Upgrading alarms database from version " +
                             oldVersion + " to " + newVersion +
                             ", which will destroy all old data");
@@ -111,7 +111,7 @@ public class AlarmProvider extends ContentProvider {
                 null, null, sort);
 
         if (ret == null) {
-            Log.v("kunxun", "Alarms.query: failed");
+            Log.v("Lily", "Alarms.query: failed");
         } else {
             ret.setNotificationUri(Objects.requireNonNull(getContext()).getContentResolver(), url);
         }
@@ -152,7 +152,7 @@ public class AlarmProvider extends ContentProvider {
                         "Cannot update URL: " + url);
             }
         }
-        Log.v("Kunxun", "*** update() alarmId: " + rowId + " url " + url);
+        Log.v("Lily", "*** update() alarmId: " + rowId + " url " + url);
         Objects.requireNonNull(getContext()).getContentResolver().notifyChange(url, null);
         return count;
     }
@@ -170,7 +170,7 @@ public class AlarmProvider extends ContentProvider {
         if (rowId < 0) {
             throw new SQLException("Failed to insert row into " + url);
         }
-        Log.v("Kunxun", "Added alarm rowId = " + rowId);
+        Log.v("Lily", "Added alarm rowId = " + rowId);
 
         Uri newUrl = ContentUris.withAppendedId(Alarm.Columns.CONTENT_URI, rowId);
 

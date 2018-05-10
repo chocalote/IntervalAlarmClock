@@ -12,10 +12,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Parcel;
-import android.provider.Settings;
 import android.util.Log;
-
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -241,18 +238,18 @@ public class Alarms {
 
     private static Alarm calculateNextAlert(final Context context) {
         Alarm alarm = null;
-        long minTime = Long.MAX_VALUE;
-        long now = System.currentTimeMillis();
-        Cursor cursor = getFilteredAlarmsCursor(context.getContentResolver());
+                    long minTime = Long.MAX_VALUE;
+                    long now = System.currentTimeMillis();
+                    Cursor cursor = getFilteredAlarmsCursor(context.getContentResolver());
 
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                Alarm a = new Alarm(cursor);
-                if (a.time == 0) {
-                    a.time = calculateAlarm(a);
-                } else if (a.time < now) {
-                    Log.v("Kunxun", "Disabling expired alarm");
-                    enableAlarmInternal(context, a, false);
+                    if (cursor != null && cursor.moveToFirst()) {
+                        do {
+                            Alarm a = new Alarm(cursor);
+                            if (a.time == 0) {
+                                a.time = calculateAlarm(a);
+                            } else if (a.time < now) {
+                                Log.v("Lily", "Disabling expired alarm");
+                                enableAlarmInternal(context, a, false);
                     continue;
                 }
                 if (a.time < minTime) {
@@ -270,6 +267,9 @@ public class Alarms {
         int nowTime = c.get(Calendar.HOUR_OF_DAY) * 60 + c.get(Calendar.MINUTE);
         int alarmStartTime = alarm.starthour * 60 + alarm.startminutes;
         int alarmEndTime = alarm.endhour * 60 + alarm.endminutes;
+        if(alarmEndTime < alarmStartTime) {
+            alarmEndTime += 24 * 60;
+        }
 
         //Interval enabled = false
         c.set(Calendar.HOUR_OF_DAY, alarm.starthour);
@@ -413,7 +413,7 @@ public class Alarms {
     private static void enableAlert(Context context, final Alarm alarm, final long atTimeInMillis) {
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        Log.v("Kunxun", "** setAlert id " + alarm.id + " atTime " + new SimpleDateFormat("yyyy-MM-dd HH:mm").format(atTimeInMillis));
+        Log.v("Lily", "** setAlert id " + alarm.id + " atTime " + new SimpleDateFormat("yyyy-MM-dd HH:mm").format(atTimeInMillis));
 
         Intent intent = new Intent(ALARM_ALERT_ACTION);
         // This is a slight hack to avoid an exception in the remote

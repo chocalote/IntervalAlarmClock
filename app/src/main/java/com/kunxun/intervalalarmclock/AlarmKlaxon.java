@@ -218,7 +218,7 @@ public class AlarmKlaxon extends Service {
                     setDataSourceFromResource(getResources(), mMediaPlayer, R.raw.fallbackring);
                     startAlarm(mMediaPlayer);
                 } catch (Exception ex2) {
-                    Log.v("kunxun","Failed to play fallback ringtong " + ex2);
+                    Log.v("Lily","Failed to play fallback ringtong " + ex2);
                 }
             }
         }
